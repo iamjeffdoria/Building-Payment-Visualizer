@@ -8,10 +8,10 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-gray-100 text-gray-800 antialiased">
-<div class="flex min-h-screen">
+<div class="group/layout min-h-screen lg:flex">
     <x-sidebar :active="trim($__env->yieldContent('active'))" />
 
-    <main class="min-w-0 flex-1 p-7">
+    <main class="min-w-0 flex-1 px-4 pb-6 pt-16 transition-all duration-300 ease-in-out sm:px-7 sm:pb-7 lg:ml-60 lg:pt-7 lg:group-has-[#sidebar-collapse:checked]/layout:ml-16">
         @if (session('greeting'))
             <div class="mb-4 rounded-md bg-green-100 px-4 py-3 text-sm text-green-800">{{ session('greeting') }}</div>
         @endif
