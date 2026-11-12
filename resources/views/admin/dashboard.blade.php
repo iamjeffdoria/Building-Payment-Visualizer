@@ -48,6 +48,7 @@
         var svg = document.getElementById('market-map');
         var panel = document.getElementById('map-panel');
         var NS = 'http://www.w3.org/2000/svg';
+        var DATA = @json($buildingData);
 
         var NAMES = ['Maria Santos', 'Juan Dela Cruz', 'Ana Villanueva', 'Pedro Reyes', 'Rosa Bacalso',
             'Carlo Tan', 'Lita Gonzales', 'Ramon Cabrera', 'Elena Pacatang', 'Jose Mangubat',
@@ -93,18 +94,10 @@
             };
         }
 
-        BUILDINGS.forEach(function (b, i) {
-            var rand = seeded(i + 11);
-            b.list = [];
-            for (var n = 1; n <= b.stalls; n++) {
-                var r = rand();
-                b.list.push({
-                    no: b.short + '-' + String(n).padStart(2, '0'),
-                    tenant: NAMES[Math.floor(rand() * NAMES.length)],
-                    amount: b.rent,
-                    status: r < 0.6 ? 'paid' : (r < 0.85 ? 'unpaid' : 'overdue')
-                });
-            }
+        BUILDINGS.forEach(function (b) {
+            var data = DATA[b.id];
+            b.list = data ? data.stalls : [];
+            b.url = data ? data.url : '#';
         });
 
         function summarize(b) {
@@ -114,7 +107,7 @@
                 s.expected += st.amount;
                 if (st.status === 'paid') s.collected += st.amount;
             });
-            s.rate = s.paid / s.total;
+            s.rate = s.total ? s.paid / s.total : 0;
             return s;
         }
 
@@ -162,7 +155,7 @@
             var g = el('g', { 'data-id': b.id, class: 'building', style: 'cursor:pointer' });
             b.rect = el('rect', {
                 x: b.x, y: b.y, width: b.w, height: b.h,
-                fill: fillFor(b.sum.rate), stroke: '#374151', 'stroke-width': 2
+                fill: b.sum.total ? fillFor(b.sum.rate) : '#e5e7eb', stroke: '#374151', 'stroke-width': 2
             });
             g.appendChild(b.rect);
             addText(g, b.label, b.x + b.w / 2, b.y + b.h / 2, b.fs || 11, !!b.v);
@@ -198,10 +191,14 @@
                     '</tr>';
             }).join('');
 
+            if (!rows) {
+                rows = '<tr><td colspan="4" class="px-2 py-3 text-gray-500">No stalls yet.</td></tr>';
+            }
+
             panel.innerHTML =
                 '<div class="flex items-start justify-between gap-2">' +
                     '<div><strong>' + b.label + '</strong>' +
-                    '<p class="text-sm text-gray-500">' + s.total + ' stalls' + (pinned === b.id ? ' &middot; pinned' : '') + '</p></div>' +
+                    '<p class="text-sm text-gray-500">' + s.total + ' stalls' + (pinned === b.id ? ' &middot; pinned' : '') + ' &middot; <a href="' + b.url + '" class="text-blue-600 hover:underline">Manage stalls</a></p></div>' +
                     (pinned === b.id ? '<button type="button" data-unpin class="rounded-md bg-gray-200 px-2.5 py-1 text-xs hover:bg-gray-300">Unpin</button>' : '') +
                 '</div>' +
                 '<div class="mt-3 grid grid-cols-3 gap-2 text-center text-xs">' +

@@ -57,6 +57,15 @@
             <span class="truncate lg:group-has-[#sidebar-collapse:checked]/collapse:hidden">Dashboard</span>
         </a>
 
+        <a href="{{ route('admin.buildings') }}" title="Buildings"
+            class="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors lg:group-has-[#sidebar-collapse:checked]/collapse:justify-center lg:group-has-[#sidebar-collapse:checked]/collapse:px-0
+            {{ $active === 'buildings' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800' }}">
+            <svg class="size-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+            <span class="truncate lg:group-has-[#sidebar-collapse:checked]/collapse:hidden">Buildings</span>
+        </a>
+
         @if (auth()->user()->isSuperadmin())
             <a href="{{ route('admin.users') }}" title="Admin Users"
                 class="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors lg:group-has-[#sidebar-collapse:checked]/collapse:justify-center lg:group-has-[#sidebar-collapse:checked]/collapse:px-0
