@@ -1,10 +1,5 @@
 @php
-    $badges = [
-        'paid' => 'bg-green-100 text-green-800',
-        'unpaid' => 'bg-amber-100 text-amber-800',
-        'overdue' => 'bg-red-100 text-red-800',
-    ];
-    $pct = $s['total'] ? round($s['paid'] / $s['total'] * 100) : 0;
+    $pct = $s['expected'] > 0 ? (int) round($s['collected'] / $s['expected'] * 100) : 0;
 @endphp
 
 <div class="flex items-start justify-between gap-2">
@@ -20,9 +15,10 @@
     @endif
 </div>
 
-<div class="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
+<div class="mt-3 grid grid-cols-4 gap-2 text-center text-xs">
     <div class="rounded-lg bg-green-50 p-2"><div class="text-lg font-semibold text-green-800">{{ $s['paid'] }}</div>Paid</div>
-    <div class="rounded-lg bg-amber-50 p-2"><div class="text-lg font-semibold text-amber-800">{{ $s['unpaid'] }}</div>Unpaid</div>
+    <div class="rounded-lg bg-blue-50 p-2"><div class="text-lg font-semibold text-blue-800">{{ $s['partial'] }}</div>Partial</div>
+    <div class="rounded-lg bg-gray-100 p-2"><div class="text-lg font-semibold text-gray-700">{{ $s['unpaid'] }}</div>Unpaid</div>
     <div class="rounded-lg bg-red-50 p-2"><div class="text-lg font-semibold text-red-800">{{ $s['overdue'] }}</div>Overdue</div>
 </div>
 
@@ -37,23 +33,24 @@
 </div>
 
 <div class="mt-3 max-h-80 overflow-y-auto">
-    <table class="w-full text-left text-sm">
+    <table class="w-full text-left text-xs">
         <thead class="sticky top-0 bg-white">
-            <tr class="border-b border-gray-200 text-xs uppercase text-gray-500">
+            <tr class="border-b border-gray-200 uppercase text-gray-500">
                 <th class="px-2 py-2">Stall</th>
                 <th class="px-2 py-2">Person</th>
-                <th class="px-2 py-2">Amount</th>
+                <th class="px-2 py-2">Paid / Due</th>
                 <th class="px-2 py-2">Status</th>
             </tr>
         </thead>
         <tbody>
             @forelse ($stalls as $stall)
+                @php($status = $stall->status)
                 <tr class="border-b border-gray-100">
                     <td class="px-2 py-1.5 font-medium">{{ $stall->stall_no }}</td>
                     <td class="px-2 py-1.5">{{ $stall->tenant_name }}</td>
-                    <td class="px-2 py-1.5">₱{{ number_format($stall->amount) }}</td>
+                    <td class="px-2 py-1.5">₱{{ number_format($stall->amount_paid) }} <span class="text-gray-400">/ ₱{{ number_format($stall->amount) }}</span></td>
                     <td class="px-2 py-1.5">
-                        <span class="rounded-full px-2 py-0.5 text-xs {{ $badges[$stall->status] ?? 'bg-gray-200' }}">{{ ucfirst($stall->status) }}</span>
+                        <span class="rounded-full px-2 py-0.5 {{ \App\Models\Stall::STATUS_BADGES[$status] }}">{{ ucfirst($status) }}</span>
                     </td>
                 </tr>
             @empty

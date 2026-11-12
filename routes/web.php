@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\BuildingController;
 use App\Http\Controllers\Admin\StallController;
+use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\ProfileController;
 
 Route::get('/', function () {
@@ -32,8 +33,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/buildings/{building}', [BuildingController::class, 'show'])->name('admin.buildings.show');
     Route::get('/admin/buildings/{building}/panel', [BuildingController::class, 'panel'])->name('admin.buildings.panel');
     Route::post('/admin/buildings/{building}/stalls', [StallController::class, 'store'])->name('admin.stalls.store');
+    Route::get('/admin/stalls/{stall}', [StallController::class, 'show'])->name('admin.stalls.show');
     Route::put('/admin/stalls/{stall}', [StallController::class, 'update'])->name('admin.stalls.update');
     Route::delete('/admin/stalls/{stall}', [StallController::class, 'destroy'])->name('admin.stalls.destroy');
+
+    Route::post('/admin/stalls/{stall}/payments', [PaymentController::class, 'store'])->name('admin.payments.store');
+    Route::delete('/admin/payments/{payment}', [PaymentController::class, 'destroy'])->name('admin.payments.destroy');
 });
 
 // Superadmin only

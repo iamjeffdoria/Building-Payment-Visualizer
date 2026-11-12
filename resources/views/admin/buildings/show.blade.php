@@ -3,19 +3,15 @@
 @section('title', $building->name)
 @section('active', 'buildings')
 
-@php
-    $badges = [
-        'paid' => 'bg-green-100 text-green-800',
-        'unpaid' => 'bg-amber-100 text-amber-800',
-        'overdue' => 'bg-red-100 text-red-800',
-    ];
-@endphp
-
 @section('content')
     <div class="mb-5">
         <a href="{{ route('admin.buildings') }}" class="text-sm text-blue-600 hover:underline">&laquo; All buildings</a>
         <h1 class="mt-1 text-2xl font-semibold">{{ $building->name }}</h1>
-        <p class="text-sm text-gray-500">{{ $building->stalls_count }} stalls &middot; default rent ₱{{ number_format($building->rent, 2) }}</p>
+        <p class="text-sm text-gray-500">
+            {{ $building->stalls_count }} stalls
+            &middot; Collected ₱{{ number_format($building->collected ?? 0, 2) }} of ₱{{ number_format($building->expected ?? 0, 2) }}
+            &middot; default rent ₱{{ number_format($building->rent, 2) }}
+        </p>
     </div>
 
     {{-- Add stall --}}
@@ -35,17 +31,14 @@
                        class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
             </div>
             <div>
-                <label class="mb-1 block text-sm font-medium">Amount</label>
+                <label class="mb-1 block text-sm font-medium">Amount due</label>
                 <input type="number" step="0.01" min="0" name="amount" value="{{ old('amount') }}" placeholder="{{ $building->rent }}"
                        class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
             </div>
             <div>
-                <label class="mb-1 block text-sm font-medium">Status</label>
-                <select name="status" class="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm">
-                    <option value="unpaid">Unpaid</option>
-                    <option value="paid">Paid</option>
-                    <option value="overdue">Overdue</option>
-                </select>
+                <label class="mb-1 block text-sm font-medium">Due date <span class="text-xs text-gray-500">(optional)</span></label>
+                <input type="date" name="due_date" value="{{ old('due_date') }}"
+                       class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
             </div>
             <div class="sm:col-span-2 lg:col-span-5">
                 <button type="submit" class="rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700">+ Add stall</button>
@@ -66,6 +59,7 @@
                 <select id="sf-status" name="status" class="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm">
                     <option value="">All statuses</option>
                     <option value="paid" @selected(request('status') === 'paid')>Paid</option>
+                    <option value="partial" @selected(request('status') === 'partial')>Partial</option>
                     <option value="unpaid" @selected(request('status') === 'unpaid')>Unpaid</option>
                     <option value="overdue" @selected(request('status') === 'overdue')>Overdue</option>
                 </select>
@@ -92,16 +86,12 @@
                 <input type="text" name="stall_no" id="es-no" required class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
             </div>
             <div>
-                <label class="mb-1 block text-sm font-medium">Amount</label>
+                <label class="mb-1 block text-sm font-medium">Amount due</label>
                 <input type="number" step="0.01" min="0" name="amount" id="es-amount" required class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
             </div>
             <div>
-                <label class="mb-1 block text-sm font-medium">Status</label>
-                <select name="status" id="es-status" class="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm">
-                    <option value="unpaid">Unpaid</option>
-                    <option value="paid">Paid</option>
-                    <option value="overdue">Overdue</option>
-                </select>
+                <label class="mb-1 block text-sm font-medium">Due date <span class="text-xs text-gray-500">(optional)</span></label>
+                <input type="date" name="due_date" id="es-due" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
             </div>
             <div class="flex justify-end gap-2 pt-3">
                 <button type="button" data-close class="rounded-md bg-gray-200 px-4 py-2 text-sm hover:bg-gray-300">Cancel</button>
@@ -121,7 +111,7 @@
         document.getElementById('es-name').value = btn.dataset.name;
         document.getElementById('es-no').value = btn.dataset.stallNo;
         document.getElementById('es-amount').value = btn.dataset.amount;
-        document.getElementById('es-status').value = btn.dataset.status;
+        document.getElementById('es-due').value = btn.dataset.due;
         document.getElementById('edit-stall-dialog').showModal();
     });
 

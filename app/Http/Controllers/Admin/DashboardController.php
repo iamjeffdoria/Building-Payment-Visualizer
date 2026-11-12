@@ -11,15 +11,12 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         $buildingData = Building::query()
-            ->withCount([
-                'stalls',
-                'stalls as paid_count' => fn ($q) => $q->where('status', 'paid'),
-            ])
+            ->withStallStats()
             ->get()
             ->mapWithKeys(fn ($b) => [
                 $b->code => [
                     'total' => $b->stalls_count,
-                    'paid' => $b->paid_count,
+                    'rate' => (float) $b->expected > 0 ? (float) $b->collected / (float) $b->expected : 0,
                     'panel' => route('admin.buildings.panel', $b),
                 ],
             ]);

@@ -11,10 +11,7 @@ class BuildingController extends Controller
     public function index(Request $request)
     {
         $buildings = Building::query()
-            ->withCount([
-                'stalls',
-                'stalls as paid_count' => fn ($q) => $q->where('status', 'paid'),
-            ])
+            ->withStallStats()
             ->when($request->filled('search'), function ($q) use ($request) {
                 $term = '%' . $request->input('search') . '%';
                 $q->where(fn ($w) => $w->where('name', 'like', $term)
@@ -32,7 +29,9 @@ class BuildingController extends Controller
 
     public function show(Request $request, Building $building)
     {
-        $building->loadCount('stalls');
+        $building->loadCount('stalls')
+            ->loadSum('stalls as collected', 'amount_paid')
+            ->loadSum('stalls as expected', 'amount');
 
         $stalls = $building->stalls()
             ->when($request->filled('search'), function ($q) use ($request) {
@@ -40,8 +39,8 @@ class BuildingController extends Controller
                 $q->where(fn ($w) => $w->where('tenant_name', 'like', $term)
                     ->orWhere('stall_no', 'like', $term));
             })
-            ->when($request->filled('status'), fn ($q) =>
-                $q->where('status', $request->input('status')))
+            ->when($request->filled('status'), fn ($q) => $q->ofStatus($request->input('status')))
+            ->orderBy('stall_no')
             ->paginate(15)
             ->withQueryString();
 
@@ -55,14 +54,16 @@ class BuildingController extends Controller
     // Server-rendered hover panel for the dashboard map
     public function panel(Request $request, Building $building)
     {
-        $stalls = $building->stalls()->get();
+        $stalls = $building->stalls()->orderBy('stall_no')->get();
+        $counts = $stalls->countBy(fn ($s) => $s->status);
 
         $summary = [
             'total' => $stalls->count(),
-            'paid' => $stalls->where('status', 'paid')->count(),
-            'unpaid' => $stalls->where('status', 'unpaid')->count(),
-            'overdue' => $stalls->where('status', 'overdue')->count(),
-            'collected' => (float) $stalls->where('status', 'paid')->sum('amount'),
+            'paid' => $counts->get('paid', 0),
+            'partial' => $counts->get('partial', 0),
+            'unpaid' => $counts->get('unpaid', 0),
+            'overdue' => $counts->get('overdue', 0),
+            'collected' => (float) $stalls->sum('amount_paid'),
             'expected' => (float) $stalls->sum('amount'),
         ];
 

@@ -115,7 +115,7 @@
             var d = DATA[b.id] || { total: 0, paid: 0, panel: null };
             b.total = d.total;
             b.panel = d.panel;
-            var rate = d.total ? d.paid / d.total : 0;
+            var rate = d.rate || 0;
 
             var g = el('g', { 'data-id': b.id, class: 'building', style: 'cursor:pointer' });
             b.rect = el('rect', {
