@@ -8,15 +8,24 @@ use Illuminate\Http\Request;
 
 class BuildingController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $buildings = Building::query()
             ->withCount([
                 'stalls',
                 'stalls as paid_count' => fn ($q) => $q->where('status', 'paid'),
             ])
+            ->when($request->filled('search'), function ($q) use ($request) {
+                $term = '%' . $request->input('search') . '%';
+                $q->where(fn ($w) => $w->where('name', 'like', $term)
+                    ->orWhere('short', 'like', $term));
+            })
             ->orderBy('name')
             ->get();
+
+        if ($request->ajax()) {
+            return view('admin.buildings.partials.building-results', compact('buildings'));
+        }
 
         return view('admin.buildings.index', compact('buildings'));
     }
