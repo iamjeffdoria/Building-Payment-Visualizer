@@ -15,7 +15,7 @@
     <div class="mb-5">
         <a href="{{ route('admin.buildings') }}" class="text-sm text-blue-600 hover:underline">&laquo; All buildings</a>
         <h1 class="mt-1 text-2xl font-semibold">{{ $building->name }}</h1>
-        <p class="text-sm text-gray-500">{{ $building->stalls->count() }} stalls &middot; default rent ₱{{ number_format($building->rent, 2) }}</p>
+        <p class="text-sm text-gray-500">{{ $building->stalls_count }} stalls &middot; default rent ₱{{ number_format($building->rent, 2) }}</p>
     </div>
 
     {{-- Add stall --}}
@@ -55,48 +55,25 @@
 
     {{-- Stall list --}}
     <div class="rounded-xl bg-white p-5 shadow-sm">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm">
-                <thead>
-                    <tr class="border-b border-gray-200 text-xs uppercase text-gray-500">
-                        <th class="px-2 py-2.5">Stall</th>
-                        <th class="px-2 py-2.5">Person</th>
-                        <th class="px-2 py-2.5">Amount</th>
-                        <th class="px-2 py-2.5">Status</th>
-                        <th class="w-40 px-2 py-2.5">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($building->stalls as $stall)
-                        <tr class="border-b border-gray-100">
-                            <td class="px-2 py-2.5 font-medium">{{ $stall->stall_no }}</td>
-                            <td class="px-2 py-2.5">{{ $stall->tenant_name }}</td>
-                            <td class="px-2 py-2.5">₱{{ number_format($stall->amount, 2) }}</td>
-                            <td class="px-2 py-2.5">
-                                <span class="rounded-full px-2 py-0.5 text-xs {{ $badges[$stall->status] ?? 'bg-gray-200' }}">{{ ucfirst($stall->status) }}</span>
-                            </td>
-                            <td class="px-2 py-2.5">
-                                <button type="button" data-edit
-                                        data-id="{{ $stall->id }}"
-                                        data-stall-no="{{ $stall->stall_no }}"
-                                        data-name="{{ $stall->tenant_name }}"
-                                        data-amount="{{ $stall->amount }}"
-                                        data-status="{{ $stall->status }}"
-                                        class="rounded-md bg-blue-600 px-2.5 py-1 text-xs text-white hover:bg-blue-700">Edit</button>
+        <div id="stall-filters" class="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <div class="sm:col-span-2">
+                <label for="sf-search" class="mb-1 block text-sm font-medium">Search</label>
+                <input type="text" id="sf-search" name="search" value="{{ request('search') }}" placeholder="Person name or stall no."
+                       class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
+            </div>
+            <div>
+                <label for="sf-status" class="mb-1 block text-sm font-medium">Status</label>
+                <select id="sf-status" name="status" class="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm">
+                    <option value="">All statuses</option>
+                    <option value="paid" @selected(request('status') === 'paid')>Paid</option>
+                    <option value="unpaid" @selected(request('status') === 'unpaid')>Unpaid</option>
+                    <option value="overdue" @selected(request('status') === 'overdue')>Overdue</option>
+                </select>
+            </div>
+        </div>
 
-                                <form method="POST" action="{{ route('admin.stalls.destroy', $stall) }}" class="inline"
-                                      onsubmit="return confirm('Remove this stall?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="rounded-md bg-red-600 px-2.5 py-1 text-xs text-white hover:bg-red-700">Delete</button>
-                                </form>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr><td colspan="5" class="px-2 py-3 text-gray-500">No stalls yet. Add the first one above.</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
+        <div id="stall-results">
+            @include('admin.buildings.partials.stall-results')
         </div>
     </div>
 
@@ -147,5 +124,43 @@
         document.getElementById('es-status').value = btn.dataset.status;
         document.getElementById('edit-stall-dialog').showModal();
     });
+
+    (function () {
+        var results = document.getElementById('stall-results');
+        var filterBox = document.getElementById('stall-filters');
+        var timer = null;
+
+        function load(url) {
+            fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                .then(function (r) { return r.text(); })
+                .then(function (html) {
+                    results.innerHTML = html;
+                    history.replaceState(null, '', url);
+                });
+        }
+
+        function buildUrl() {
+            var params = new URLSearchParams();
+            filterBox.querySelectorAll('input, select').forEach(function (el) {
+                if (el.value.trim() !== '') params.set(el.name, el.value.trim());
+            });
+            var qs = params.toString();
+            return '{{ route('admin.buildings.show', $building) }}' + (qs ? '?' + qs : '');
+        }
+
+        filterBox.addEventListener('input', function () {
+            clearTimeout(timer);
+            timer = setTimeout(function () { load(buildUrl()); }, 300);
+        });
+        filterBox.addEventListener('change', function () { load(buildUrl()); });
+
+        results.addEventListener('click', function (e) {
+            var pageLink = e.target.closest('[data-page]');
+            if (pageLink) {
+                e.preventDefault();
+                load(pageLink.href);
+            }
+        });
+    })();
 </script>
 @endpush

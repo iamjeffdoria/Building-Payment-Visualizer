@@ -30,6 +30,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/admin/buildings', [BuildingController::class, 'index'])->name('admin.buildings');
     Route::get('/admin/buildings/{building}', [BuildingController::class, 'show'])->name('admin.buildings.show');
+    Route::get('/admin/buildings/{building}/panel', [BuildingController::class, 'panel'])->name('admin.buildings.panel');
     Route::post('/admin/buildings/{building}/stalls', [StallController::class, 'store'])->name('admin.stalls.store');
     Route::put('/admin/stalls/{stall}', [StallController::class, 'update'])->name('admin.stalls.update');
     Route::delete('/admin/stalls/{stall}', [StallController::class, 'destroy'])->name('admin.stalls.destroy');

@@ -15,9 +15,9 @@
         </p>
     </div>
 
-    <div class="grid grid-cols-1 gap-4 xl:grid-cols-3">
+    <div class="grid grid-cols-1 gap-4 2xl:grid-cols-[minmax(0,1fr)_22rem]">
         {{-- Map --}}
-        <div class="rounded-xl bg-white p-5 shadow-sm xl:col-span-2">
+        <div class="rounded-xl bg-white p-5 shadow-sm">
             <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
                 <div>
                     <strong>LGU Palompon Market Map</strong>
@@ -31,11 +31,11 @@
             </div>
 
             <div class="overflow-x-auto rounded-lg border border-gray-200 bg-gray-50">
-                <svg id="market-map" viewBox="0 0 1000 420" class="min-w-[640px] w-full select-none"></svg>
+                <svg id="market-map" viewBox="10 0 960 415" class="min-w-[760px] w-full select-none"></svg>
             </div>
         </div>
 
-        {{-- Details panel --}}
+        {{-- Details panel (HTML is rendered by the server) --}}
         <div class="rounded-xl bg-white p-5 shadow-sm">
             <div id="map-panel"></div>
         </div>
@@ -50,26 +50,22 @@
         var NS = 'http://www.w3.org/2000/svg';
         var DATA = @json($buildingData);
 
-        var NAMES = ['Maria Santos', 'Juan Dela Cruz', 'Ana Villanueva', 'Pedro Reyes', 'Rosa Bacalso',
-            'Carlo Tan', 'Lita Gonzales', 'Ramon Cabrera', 'Elena Pacatang', 'Jose Mangubat',
-            'Nena Abella', 'Roel Quirog', 'Cora Labra', 'Dante Ocon', 'Gina Ybanez', 'Mario Alcala'];
-
         // x, y, w, h are SVG coordinates. v = vertical label.
         var BUILDINGS = [
-            { id: 'b7a', label: 'BLDG. 7A', short: '7A', x: 192, y: 8,   w: 51,  h: 187, v: true, stalls: 12, rent: 1500 },
-            { id: 'b2',  label: 'BLDG. 2',  short: 'B2', x: 292, y: 8,   w: 178, h: 52,  stalls: 16, rent: 1800 },
-            { id: 'b1',  label: 'BLDG. 1',  short: 'B1', x: 485, y: 9,   w: 170, h: 52,  stalls: 12, rent: 1800 },
-            { id: 'b5',  label: 'BLDG. 5',  short: 'B5', x: 392, y: 112, w: 172, h: 50,  stalls: 10, rent: 2000 },
-            { id: 'b4',  label: 'BLDG. 4',  short: 'B4', x: 288, y: 112, w: 55,  h: 196, v: true, stalls: 14, rent: 1600 },
-            { id: 'b6',  label: 'BLDG. 6',  short: 'B6', x: 392, y: 183, w: 178, h: 124, stalls: 24, rent: 2200 },
-            { id: 'b3',  label: 'BLDG. 3',  short: 'B3', x: 612, y: 110, w: 56,  h: 195, v: true, stalls: 14, rent: 1600 },
-            { id: 'b7',  label: 'BLDG. 7',  short: 'B7', x: 35,  y: 240, w: 200, h: 70,  stalls: 18, rent: 1500 },
-            { id: 'rl',  label: 'ROW L',    short: 'RL', x: 23,  y: 350, w: 217, h: 48,  stalls: 10, rent: 1200 },
-            { id: 'rk',  label: 'ROW K',    short: 'RK', x: 254, y: 348, w: 134, h: 47,  stalls: 8,  rent: 1200 },
-            { id: 'bw',  label: 'BAYWALK',  short: 'BW', x: 390, y: 344, w: 335, h: 61,  fs: 15, stalls: 20, rent: 2500 },
-            { id: 'p1',  label: 'PAINITAN SEC. 1', short: 'P1', x: 720, y: 258, w: 170, h: 27, fs: 9, stalls: 6, rent: 1400 },
-            { id: 'p2',  label: 'PAINITAN SEC. 2', short: 'P2', x: 725, y: 300, w: 138, h: 35, fs: 9, stalls: 6, rent: 1400 },
-            { id: 'p3',  label: 'PAINITAN SEC. 3', short: 'P3', x: 730, y: 360, w: 135, h: 35, fs: 9, stalls: 6, rent: 1400 }
+            { id: 'b7a', label: 'BLDG. 7A', x: 192, y: 8,   w: 51,  h: 187, v: true },
+            { id: 'b2',  label: 'BLDG. 2',  x: 292, y: 8,   w: 178, h: 52 },
+            { id: 'b1',  label: 'BLDG. 1',  x: 485, y: 9,   w: 170, h: 52 },
+            { id: 'b5',  label: 'BLDG. 5',  x: 392, y: 112, w: 172, h: 50 },
+            { id: 'b4',  label: 'BLDG. 4',  x: 288, y: 112, w: 55,  h: 196, v: true },
+            { id: 'b6',  label: 'BLDG. 6',  x: 392, y: 183, w: 178, h: 124 },
+            { id: 'b3',  label: 'BLDG. 3',  x: 612, y: 110, w: 56,  h: 195, v: true },
+            { id: 'b7',  label: 'BLDG. 7',  x: 35,  y: 240, w: 200, h: 70 },
+            { id: 'rl',  label: 'ROW L',    x: 23,  y: 350, w: 217, h: 48 },
+            { id: 'rk',  label: 'ROW K',    x: 254, y: 348, w: 134, h: 47 },
+            { id: 'bw',  label: 'BAYWALK',  x: 390, y: 344, w: 335, h: 61, fs: 15 },
+            { id: 'p1',  label: 'PAINITAN SEC. 1', x: 720, y: 258, w: 170, h: 27, fs: 9 },
+            { id: 'p2',  label: 'PAINITAN SEC. 2', x: 725, y: 300, w: 138, h: 35, fs: 9 },
+            { id: 'p3',  label: 'PAINITAN SEC. 3', x: 730, y: 360, w: 135, h: 35, fs: 9 }
         ];
 
         // Non-interactive landmarks
@@ -78,46 +74,11 @@
             { label: 'METRO BANK', x: 773, y: 214, w: 115, h: 40, fs: 8 }
         ];
 
-        var STATUS = {
-            paid:    { text: 'Paid',    badge: 'bg-green-100 text-green-800' },
-            unpaid:  { text: 'Unpaid',  badge: 'bg-amber-100 text-amber-800' },
-            overdue: { text: 'Overdue', badge: 'bg-red-100 text-red-800' }
-        };
-
-        // Deterministic mock data (same every refresh). Replace with backend data later.
-        function seeded(seed) {
-            return function () {
-                seed |= 0; seed = seed + 0x6D2B79F5 | 0;
-                var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
-                t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
-                return ((t ^ t >>> 14) >>> 0) / 4294967296;
-            };
-        }
-
-        BUILDINGS.forEach(function (b) {
-            var data = DATA[b.id];
-            b.list = data ? data.stalls : [];
-            b.url = data ? data.url : '#';
-        });
-
-        function summarize(b) {
-            var s = { paid: 0, unpaid: 0, overdue: 0, total: b.list.length, collected: 0, expected: 0 };
-            b.list.forEach(function (st) {
-                s[st.status]++;
-                s.expected += st.amount;
-                if (st.status === 'paid') s.collected += st.amount;
-            });
-            s.rate = s.total ? s.paid / s.total : 0;
-            return s;
-        }
-
         function fillFor(rate) {
             if (rate >= 0.7) return '#86efac';
             if (rate >= 0.5) return '#fcd34d';
             return '#fca5a5';
         }
-
-        function peso(n) { return '₱' + n.toLocaleString(); }
 
         function el(name, attrs) {
             var node = document.createElementNS(NS, name);
@@ -149,13 +110,17 @@
             svg.appendChild(g);
         });
 
-        // Draw buildings
+        // Draw buildings (only the counts come from the server, used for the color)
         BUILDINGS.forEach(function (b) {
-            b.sum = summarize(b);
+            var d = DATA[b.id] || { total: 0, paid: 0, panel: null };
+            b.total = d.total;
+            b.panel = d.panel;
+            var rate = d.total ? d.paid / d.total : 0;
+
             var g = el('g', { 'data-id': b.id, class: 'building', style: 'cursor:pointer' });
             b.rect = el('rect', {
                 x: b.x, y: b.y, width: b.w, height: b.h,
-                fill: b.sum.total ? fillFor(b.sum.rate) : '#e5e7eb', stroke: '#374151', 'stroke-width': 2
+                fill: d.total ? fillFor(rate) : '#e5e7eb', stroke: '#374151', 'stroke-width': 2
             });
             g.appendChild(b.rect);
             addText(g, b.label, b.x + b.w / 2, b.y + b.h / 2, b.fs || 11, !!b.v);
@@ -163,6 +128,8 @@
         });
 
         var pinned = null;
+        var cache = {};
+        var reqId = 0;
 
         function highlight(activeId) {
             BUILDINGS.forEach(function (b) {
@@ -173,50 +140,37 @@
             });
         }
 
-        function renderPanel(b) {
-            if (!b) {
-                panel.innerHTML =
-                    '<strong>Stall details</strong>' +
-                    '<p class="mt-1.5 text-sm text-gray-500">Hover over a building on the map to see its stalls and payment status.</p>';
+        function renderEmpty() {
+            reqId++;
+            panel.innerHTML =
+                '<strong>Stall details</strong>' +
+                '<p class="mt-1.5 text-sm text-gray-500">Hover over a building on the map to see its stalls and payment status.</p>';
+        }
+
+        // The panel HTML is rendered by Laravel. We only fetch and drop it in.
+        function showPanel(b) {
+            if (!b || !b.panel) { renderEmpty(); return; }
+
+            var isPinned = pinned === b.id;
+            var key = b.id + (isPinned ? ':1' : ':0');
+            var req = ++reqId;
+
+            if (cache[key]) {
+                panel.innerHTML = cache[key];
                 return;
             }
-            var s = b.sum;
-            var pct = Math.round(s.rate * 100);
-            var rows = b.list.map(function (st) {
-                return '<tr class="border-b border-gray-100">' +
-                    '<td class="px-2 py-1.5 font-medium">' + st.no + '</td>' +
-                    '<td class="px-2 py-1.5">' + st.tenant + '</td>' +
-                    '<td class="px-2 py-1.5">' + peso(st.amount) + '</td>' +
-                    '<td class="px-2 py-1.5"><span class="rounded-full px-2 py-0.5 text-xs ' + STATUS[st.status].badge + '">' + STATUS[st.status].text + '</span></td>' +
-                    '</tr>';
-            }).join('');
 
-            if (!rows) {
-                rows = '<tr><td colspan="4" class="px-2 py-3 text-gray-500">No stalls yet.</td></tr>';
-            }
+            panel.innerHTML = '<p class="text-sm text-gray-500">Loading...</p>';
 
-            panel.innerHTML =
-                '<div class="flex items-start justify-between gap-2">' +
-                    '<div><strong>' + b.label + '</strong>' +
-                    '<p class="text-sm text-gray-500">' + s.total + ' stalls' + (pinned === b.id ? ' &middot; pinned' : '') + ' &middot; <a href="' + b.url + '" class="text-blue-600 hover:underline">Manage stalls</a></p></div>' +
-                    (pinned === b.id ? '<button type="button" data-unpin class="rounded-md bg-gray-200 px-2.5 py-1 text-xs hover:bg-gray-300">Unpin</button>' : '') +
-                '</div>' +
-                '<div class="mt-3 grid grid-cols-3 gap-2 text-center text-xs">' +
-                    '<div class="rounded-lg bg-green-50 p-2"><div class="text-lg font-semibold text-green-800">' + s.paid + '</div>Paid</div>' +
-                    '<div class="rounded-lg bg-amber-50 p-2"><div class="text-lg font-semibold text-amber-800">' + s.unpaid + '</div>Unpaid</div>' +
-                    '<div class="rounded-lg bg-red-50 p-2"><div class="text-lg font-semibold text-red-800">' + s.overdue + '</div>Overdue</div>' +
-                '</div>' +
-                '<div class="mt-3">' +
-                    '<div class="mb-1 flex justify-between text-xs text-gray-500"><span>Collected ' + peso(s.collected) + ' of ' + peso(s.expected) + '</span><span>' + pct + '%</span></div>' +
-                    '<div class="h-2 overflow-hidden rounded-full bg-gray-200"><div class="h-full bg-green-500" style="width:' + pct + '%"></div></div>' +
-                '</div>' +
-                '<div class="mt-3 max-h-80 overflow-y-auto">' +
-                    '<table class="w-full text-left text-sm">' +
-                        '<thead class="sticky top-0 bg-white"><tr class="border-b border-gray-200 text-xs uppercase text-gray-500">' +
-                            '<th class="px-2 py-2">Stall</th><th class="px-2 py-2">Tenant</th><th class="px-2 py-2">Amount</th><th class="px-2 py-2">Status</th>' +
-                        '</tr></thead><tbody>' + rows + '</tbody>' +
-                    '</table>' +
-                '</div>';
+            fetch(b.panel + (isPinned ? '?pinned=1' : ''), { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                .then(function (r) { return r.text(); })
+                .then(function (html) {
+                    cache[key] = html;
+                    if (req === reqId) panel.innerHTML = html;
+                })
+                .catch(function () {
+                    if (req === reqId) panel.innerHTML = '<p class="text-sm text-red-600">Could not load stalls.</p>';
+                });
         }
 
         function findBuilding(target) {
@@ -231,31 +185,31 @@
 
         svg.addEventListener('mouseover', function (e) {
             var b = findBuilding(e.target);
-            if (b) { highlight(b.id); renderPanel(b); }
+            if (b) { highlight(b.id); showPanel(b); }
         });
 
         svg.addEventListener('mouseleave', function () {
             var p = current();
             highlight(p ? p.id : null);
-            renderPanel(p);
+            p ? showPanel(p) : renderEmpty();
         });
 
         svg.addEventListener('click', function (e) {
             var b = findBuilding(e.target);
             pinned = b ? b.id : null;
             highlight(pinned);
-            renderPanel(b);
+            b ? showPanel(b) : renderEmpty();
         });
 
         panel.addEventListener('click', function (e) {
             if (e.target.closest('[data-unpin]')) {
                 pinned = null;
                 highlight(null);
-                renderPanel(null);
+                renderEmpty();
             }
         });
 
-        renderPanel(null);
+        renderEmpty();
     })();
 </script>
 @endpush

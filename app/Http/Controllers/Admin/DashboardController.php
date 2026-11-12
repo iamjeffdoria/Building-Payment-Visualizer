@@ -10,18 +10,19 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-        $buildingData = Building::with('stalls')->get()->mapWithKeys(fn ($b) => [
-            $b->code => [
-                'id' => $b->id,
-                'url' => route('admin.buildings.show', $b),
-                'stalls' => $b->stalls->map(fn ($s) => [
-                    'no' => $s->stall_no,
-                    'tenant' => $s->tenant_name,
-                    'amount' => (float) $s->amount,
-                    'status' => $s->status,
-                ])->values(),
-            ],
-        ]);
+        $buildingData = Building::query()
+            ->withCount([
+                'stalls',
+                'stalls as paid_count' => fn ($q) => $q->where('status', 'paid'),
+            ])
+            ->get()
+            ->mapWithKeys(fn ($b) => [
+                $b->code => [
+                    'total' => $b->stalls_count,
+                    'paid' => $b->paid_count,
+                    'panel' => route('admin.buildings.panel', $b),
+                ],
+            ]);
 
         return view('admin.dashboard', [
             'user' => $request->user(),
