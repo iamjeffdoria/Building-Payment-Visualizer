@@ -10,15 +10,27 @@ class BuildingController extends Controller
 {
     public function index(Request $request)
     {
+        $num = fn (string $key) => str_replace(',', '', trim((string) $request->input($key)));
+
         $buildings = Building::query()
             ->withStallStats()
-            ->when($request->filled('search'), function ($q) use ($request) {
-                $term = '%' . $request->input('search') . '%';
+            ->when($request->filled('name'), function ($q) use ($request) {
+                $term = '%' . $request->input('name') . '%';
                 $q->where(fn ($w) => $w->where('name', 'like', $term)
                     ->orWhere('short', 'like', $term));
             })
             ->orderBy('sort')
-            ->get();
+            ->get()
+            ->when($request->filled('stalls'), fn ($c) => $c->filter(fn ($b) =>
+                str_contains((string) $b->stalls_count, $num('stalls'))))
+            ->when($request->filled('paid'), fn ($c) => $c->filter(fn ($b) =>
+                str_contains((string) $b->paid_count, $num('paid'))))
+            ->when($request->filled('collected'), fn ($c) => $c->filter(fn ($b) =>
+                str_contains((string) (float) $b->collected, $num('collected'))
+                || str_contains((string) (float) $b->expected, $num('collected'))))
+            ->when($request->filled('rent'), fn ($c) => $c->filter(fn ($b) =>
+                str_contains((string) (float) $b->rent, $num('rent'))))
+            ->values();
 
         if ($request->ajax()) {
             return view('admin.buildings.partials.building-results', compact('buildings'));

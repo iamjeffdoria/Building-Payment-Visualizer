@@ -1,16 +1,44 @@
 <div class="overflow-x-auto">
-    <table class="w-full text-left text-sm">
+    <table class="w-full min-w-[820px] text-left text-sm">
         <thead>
-            <tr class="border-b border-gray-200 text-xs uppercase text-gray-500">
-                <th class="px-2 py-2.5">Building</th>
-                <th class="px-2 py-2.5">Stalls</th>
-                <th class="px-2 py-2.5">Fully paid</th>
-                <th class="px-2 py-2.5">Collected</th>
-                <th class="px-2 py-2.5">Default rent</th>
-                <th class="w-32 px-2 py-2.5">Actions</th>
+            <tr class="text-xs uppercase text-gray-500">
+                <th class="px-2 pb-1 pt-2.5">Building</th>
+                <th class="px-2 pb-1 pt-2.5">Stalls</th>
+                <th class="px-2 pb-1 pt-2.5">Fully paid</th>
+                <th class="px-2 pb-1 pt-2.5">Collected</th>
+                <th class="px-2 pb-1 pt-2.5">Default rent</th>
+                <th class="w-32 px-2 pb-1 pt-2.5">Actions</th>
+            </tr>
+            <tr id="building-filters" data-url="{{ route('admin.buildings') }}" class="border-b border-gray-200">
+                <th class="px-2 pb-2.5 font-normal">
+                    <input type="text" name="name" value="{{ request('name') }}" placeholder="Search building"
+                           aria-label="Search by building name"
+                           class="w-full rounded-md border border-gray-300 bg-white px-2.5 py-2 text-sm text-gray-800">
+                </th>
+                <th class="px-2 pb-2.5 font-normal">
+                    <input type="text" name="stalls" value="{{ request('stalls') }}" placeholder="Search stalls"
+                           aria-label="Search by number of stalls" inputmode="numeric"
+                           class="w-full rounded-md border border-gray-300 bg-white px-2.5 py-2 text-sm text-gray-800">
+                </th>
+                <th class="px-2 pb-2.5 font-normal">
+                    <input type="text" name="paid" value="{{ request('paid') }}" placeholder="Search paid"
+                           aria-label="Search by number of fully paid stalls" inputmode="numeric"
+                           class="w-full rounded-md border border-gray-300 bg-white px-2.5 py-2 text-sm text-gray-800">
+                </th>
+                <th class="px-2 pb-2.5 font-normal">
+                    <input type="text" name="collected" value="{{ request('collected') }}" placeholder="Search amount"
+                           aria-label="Search by collected amount" inputmode="decimal"
+                           class="w-full rounded-md border border-gray-300 bg-white px-2.5 py-2 text-sm text-gray-800">
+                </th>
+                <th class="px-2 pb-2.5 font-normal">
+                    <input type="text" name="rent" value="{{ request('rent') }}" placeholder="Search rent"
+                           aria-label="Search by default rent" inputmode="decimal"
+                           class="w-full rounded-md border border-gray-300 bg-white px-2.5 py-2 text-sm text-gray-800">
+                </th>
+                <th class="px-2 pb-2.5"></th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="building-body">
             @forelse ($buildings as $building)
                 @php
                     $collected = (float) ($building->collected ?? 0);
