@@ -5,7 +5,13 @@
 
 @section('content')
     <div class="mb-5">
-        <a href="{{ route('admin.buildings') }}" class="text-sm text-blue-600 hover:underline">&laquo; All buildings</a>
+        <a href="{{ route('admin.buildings') }}"
+           class="inline-flex items-center gap-1.5 rounded-md border border-blue-200 bg-blue-50 px-3 py-1.5 text-sm font-medium text-blue-700 transition-colors hover:border-blue-300 hover:bg-blue-100 hover:text-blue-800">
+            <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            All buildings
+        </a>
         <h1 class="mt-1 text-2xl font-semibold">{{ $building->name }}</h1>
         <p class="text-sm text-gray-500">
             {{ $building->stalls_count }} stalls
@@ -14,13 +20,25 @@
         </p>
     </div>
 
-    {{-- Add stall --}}
-    <div class="mb-5 rounded-xl bg-white p-5 shadow-sm">
-        <strong>Add a stall</strong>
-        <form method="POST" action="{{ route('admin.stalls.store', $building) }}"
-              class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+    {{-- Stall list --}}
+    <div class="rounded-xl bg-white p-5 shadow-sm">
+        <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
+            <strong>Stalls</strong>
+            <button type="button" data-open="create-stall-dialog"
+                    class="rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700">+ Add stall</button>
+        </div>
+        <div id="stall-results">
+            @include('admin.buildings.partials.stall-results')
+        </div>
+    </div>
+
+    {{-- Add stall dialog --}}
+    <dialog id="create-stall-dialog" class="m-auto w-full max-w-md rounded-xl p-6 shadow-2xl backdrop:bg-black/50">
+        <h2 class="mb-2 text-lg font-semibold">Add a stall</h2>
+        <form method="POST" action="{{ route('admin.stalls.store', $building) }}" class="space-y-3">
             @csrf
-            <div class="lg:col-span-2">
+            <input type="hidden" name="_form" value="create-stall">
+            <div>
                 <label class="mb-1 block text-sm font-medium">Person name</label>
                 <input type="text" name="tenant_name" value="{{ old('tenant_name') }}" required
                        class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
@@ -40,18 +58,18 @@
                 <input type="date" name="due_date" value="{{ old('due_date') }}"
                        class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
             </div>
-            <div class="sm:col-span-2 lg:col-span-5">
-                <button type="submit" class="rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700">+ Add stall</button>
+            <div class="flex justify-end gap-2 pt-3">
+                <button type="button" data-close class="rounded-md bg-gray-200 px-4 py-2 text-sm hover:bg-gray-300">Cancel</button>
+                <button type="submit" class="rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700">Add stall</button>
             </div>
         </form>
-    </div>
+    </dialog>
 
-    {{-- Stall list --}}
-    <div class="rounded-xl bg-white p-5 shadow-sm">
-        <div id="stall-results">
-            @include('admin.buildings.partials.stall-results')
-        </div>
-    </div>
+    @if ($errors->any() && old('_form') === 'create-stall')
+        @push('scripts')
+            <script>document.getElementById('create-stall-dialog').showModal();</script>
+        @endpush
+    @endif
 
     {{-- Edit dialog --}}
     <dialog id="edit-stall-dialog" class="m-auto w-full max-w-md rounded-xl p-6 shadow-2xl backdrop:bg-black/50">

@@ -59,7 +59,7 @@ class BuildingController extends Controller
                 $q->whereDate('due_date', $request->input('due_date')))
             ->when($request->filled('status'), fn ($q) => $q->ofStatus($request->input('status')))
             ->orderBy('stall_no')
-            ->paginate(15)
+            ->paginate(20)
             ->withQueryString();
 
         if ($request->ajax()) {

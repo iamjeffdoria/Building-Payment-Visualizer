@@ -10,7 +10,13 @@
 
 @section('content')
     <div class="mb-5">
-        <a href="{{ route('admin.buildings.show', $stall->building) }}" class="text-sm text-blue-600 hover:underline">&laquo; {{ $stall->building->name }}</a>
+        <a href="{{ route('admin.buildings.show', $stall->building) }}"
+           class="inline-flex items-center gap-1.5 rounded-md border border-blue-200 bg-blue-50 px-3 py-1.5 text-sm font-medium text-blue-700 transition-colors hover:border-blue-300 hover:bg-blue-100 hover:text-blue-800">
+            <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            {{ $stall->building->name }}
+        </a>
         <div class="mt-1 flex flex-wrap items-center gap-3">
             <h1 class="text-2xl font-semibold">{{ $stall->stall_no }} &middot; {{ $stall->tenant_name }}</h1>
             <span class="rounded-full px-2 py-0.5 text-xs {{ $badge }}">{{ ucfirst($status) }}</span>
