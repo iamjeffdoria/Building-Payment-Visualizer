@@ -79,18 +79,6 @@
     </form>
 </dialog>
 
-<script>
-    document.addEventListener('click', function (e) {
-        var opener = e.target.closest('[data-open]');
-        if (opener) {
-            document.getElementById(opener.dataset.open).showModal();
-        }
-        var closer = e.target.closest('[data-close]');
-        if (closer) {
-            closer.closest('dialog').close();
-        }
-    });
-</script>
 @stack('scripts')
 </body>
 </html>

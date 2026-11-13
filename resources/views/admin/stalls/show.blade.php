@@ -105,7 +105,7 @@
                             <td class="px-2 py-2.5 text-gray-600">{{ $payment->note ?? '—' }}</td>
                             <td class="px-2 py-2.5">
                                 <form method="POST" action="{{ route('admin.payments.destroy', $payment) }}"
-                                      onsubmit="return confirm('Remove this payment?');">
+                                      data-confirm="Remove this payment?">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="rounded-md bg-red-600 px-2.5 py-1 text-xs text-white hover:bg-red-700">Delete</button>
@@ -122,12 +122,5 @@
 @endsection
 
 @push('scripts')
-<script>
-    var fill = document.getElementById('fill-balance');
-    if (fill) {
-        fill.addEventListener('click', function () {
-            document.getElementById('pay-amount').value = fill.dataset.balance;
-        });
-    }
-</script>
+    @vite(['resources/js/pages/stall-show.js'])
 @endpush

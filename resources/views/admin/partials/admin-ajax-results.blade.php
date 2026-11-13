@@ -40,7 +40,7 @@
                         @if ($admin->id !== auth()->id())
                             <form method="POST" action="{{ route('admin.users.destroy', $admin) }}"
                                   class="inline"
-                                  onsubmit="return confirm('Remove this admin account?');">
+                                  data-confirm="Remove this admin account?">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="rounded-md bg-red-600 px-2.5 py-1 text-xs text-white hover:bg-red-700">Delete</button>

@@ -11,7 +11,8 @@
     </div>
 
     <div class="rounded-xl bg-white p-5 shadow-sm">
-        <div id="filters" class="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <div id="filters" class="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-3"
+             data-url="{{ route('admin.users') }}">
             <div>
                 <label for="f-name" class="mb-1 block text-sm font-medium">Name</label>
                 <input type="text" id="f-name" name="name" value="{{ request('name') }}" placeholder="Search name"
@@ -117,54 +118,5 @@
 @endsection
 
 @push('scripts')
-<script>
-    (function () {
-        var results = document.getElementById('results');
-        var filterBox = document.getElementById('filters');
-        var timer = null;
-
-        function load(url) {
-            fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-                .then(function (r) { return r.text(); })
-                .then(function (html) {
-                    results.innerHTML = html;
-                    history.replaceState(null, '', url);
-                });
-        }
-
-        function buildUrl() {
-            var params = new URLSearchParams();
-            filterBox.querySelectorAll('input, select').forEach(function (el) {
-                if (el.value.trim() !== '') params.set(el.name, el.value.trim());
-            });
-            var qs = params.toString();
-            return '{{ route('admin.users') }}' + (qs ? '?' + qs : '');
-        }
-
-        filterBox.addEventListener('input', function () {
-            clearTimeout(timer);
-            timer = setTimeout(function () { load(buildUrl()); }, 300);
-        });
-        filterBox.addEventListener('change', function () { load(buildUrl()); });
-
-        results.addEventListener('click', function (e) {
-            var pageLink = e.target.closest('[data-page]');
-            if (pageLink) {
-                e.preventDefault();
-                load(pageLink.href);
-                return;
-            }
-
-            var editBtn = e.target.closest('[data-edit]');
-            if (editBtn) {
-                var form = document.getElementById('edit-form');
-                form.action = form.dataset.base + '/' + editBtn.dataset.id;
-                document.getElementById('e-name').value = editBtn.dataset.name;
-                document.getElementById('e-email').value = editBtn.dataset.email;
-                document.getElementById('e-role').value = editBtn.dataset.role;
-                document.getElementById('edit-dialog').showModal();
-            }
-        });
-    })();
-</script>
+    @vite(['resources/js/pages/users.js'])
 @endpush

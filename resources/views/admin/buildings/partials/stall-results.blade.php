@@ -41,7 +41,7 @@
                                 class="rounded-md bg-blue-600 px-2.5 py-1 text-xs text-white hover:bg-blue-700">Edit</button>
 
                         <form method="POST" action="{{ route('admin.stalls.destroy', $stall) }}" class="inline"
-                              onsubmit="return confirm('Remove this stall and its payment history?');">
+                              data-confirm="Remove this stall and its payment history?">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="rounded-md bg-red-600 px-2.5 py-1 text-xs text-white hover:bg-red-700">Delete</button>
