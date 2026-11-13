@@ -1,16 +1,49 @@
 <div class="overflow-x-auto">
-    <table class="w-full text-left text-sm">
+    <table class="w-full min-w-[860px] text-left text-sm">
         <thead>
-            <tr class="border-b border-gray-200 text-xs uppercase text-gray-500">
-                <th class="px-2 py-2.5">Stall</th>
-                <th class="px-2 py-2.5">Person</th>
-                <th class="px-2 py-2.5">Paid / Due</th>
-                <th class="px-2 py-2.5">Due date</th>
-                <th class="px-2 py-2.5">Status</th>
-                <th class="w-56 px-2 py-2.5">Actions</th>
+            <tr class="text-xs uppercase text-gray-500">
+                <th class="px-2 pb-1 pt-2.5">Stall</th>
+                <th class="px-2 pb-1 pt-2.5">Person</th>
+                <th class="px-2 pb-1 pt-2.5">Paid / Due</th>
+                <th class="px-2 pb-1 pt-2.5">Due date</th>
+                <th class="px-2 pb-1 pt-2.5">Status</th>
+                <th class="w-40 px-2 pb-1 pt-2.5">Actions</th>
+            </tr>
+            <tr id="stall-filters" data-url="{{ route('admin.buildings.show', $building) }}" class="border-b border-gray-200">
+                <th class="px-2 pb-2.5 font-normal">
+                    <input type="text" name="stall_no" value="{{ request('stall_no') }}" placeholder="Search stall"
+                           aria-label="Search by stall number"
+                           class="w-full rounded-md border border-gray-300 bg-white px-2.5 py-2 text-sm text-gray-800">
+                </th>
+                <th class="px-2 pb-2.5 font-normal">
+                    <input type="text" name="tenant" value="{{ request('tenant') }}" placeholder="Search person"
+                           aria-label="Search by person name"
+                           class="w-full rounded-md border border-gray-300 bg-white px-2.5 py-2 text-sm text-gray-800">
+                </th>
+                <th class="px-2 pb-2.5 font-normal">
+                    <input type="text" name="amount" value="{{ request('amount') }}" placeholder="Search amount"
+                           aria-label="Search by amount" inputmode="decimal"
+                           class="w-full rounded-md border border-gray-300 bg-white px-2.5 py-2 text-sm text-gray-800">
+                </th>
+                <th class="px-2 pb-2.5 font-normal">
+                    <input type="date" name="due_date" value="{{ request('due_date') }}"
+                           aria-label="Filter by due date"
+                           class="w-full rounded-md border border-gray-300 bg-white px-2.5 py-2 text-sm text-gray-800">
+                </th>
+                <th class="px-2 pb-2.5 font-normal">
+                    <select name="status" aria-label="Filter by status"
+                            class="w-full rounded-md border border-gray-300 bg-white px-2.5 py-2 text-sm text-gray-800">
+                        <option value="">All</option>
+                        <option value="paid" @selected(request('status') === 'paid')>Paid</option>
+                        <option value="partial" @selected(request('status') === 'partial')>Partial</option>
+                        <option value="unpaid" @selected(request('status') === 'unpaid')>Unpaid</option>
+                        <option value="overdue" @selected(request('status') === 'overdue')>Overdue</option>
+                    </select>
+                </th>
+                <th class="px-2 pb-2.5"></th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="stall-body">
             @forelse ($stalls as $stall)
                 @php($status = $stall->status)
                 <tr class="border-b border-gray-100">
@@ -29,23 +62,38 @@
                         <span class="rounded-full px-2 py-0.5 text-xs {{ \App\Models\Stall::STATUS_BADGES[$status] }}">{{ ucfirst($status) }}</span>
                     </td>
                     <td class="px-2 py-2.5">
-                        <a href="{{ route('admin.stalls.show', $stall) }}"
-                           class="rounded-md bg-green-600 px-2.5 py-1 text-xs text-white hover:bg-green-700">Payments</a>
+                        <div class="flex items-center gap-2">
+                            <a href="{{ route('admin.stalls.show', $stall) }}" title="Payments" aria-label="Payments"
+                               class="inline-flex size-10 items-center justify-center rounded-lg bg-green-600 text-white hover:bg-green-700">
+                                <svg class="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                </svg>
+                            </a>
 
-                        <button type="button" data-edit
-                                data-id="{{ $stall->id }}"
-                                data-stall-no="{{ $stall->stall_no }}"
-                                data-name="{{ $stall->tenant_name }}"
-                                data-amount="{{ $stall->amount }}"
-                                data-due="{{ $stall->due_date?->format('Y-m-d') }}"
-                                class="rounded-md bg-blue-600 px-2.5 py-1 text-xs text-white hover:bg-blue-700">Edit</button>
+                            <button type="button" data-edit title="Edit stall" aria-label="Edit stall"
+                                    data-id="{{ $stall->id }}"
+                                    data-stall-no="{{ $stall->stall_no }}"
+                                    data-name="{{ $stall->tenant_name }}"
+                                    data-amount="{{ $stall->amount }}"
+                                    data-due="{{ $stall->due_date?->format('Y-m-d') }}"
+                                    class="inline-flex size-10 items-center justify-center rounded-lg bg-blue-600 text-white hover:bg-blue-700">
+                                <svg class="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                            </button>
 
-                        <form method="POST" action="{{ route('admin.stalls.destroy', $stall) }}" class="inline"
-                              data-confirm="Remove this stall and its payment history?">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="rounded-md bg-red-600 px-2.5 py-1 text-xs text-white hover:bg-red-700">Delete</button>
-                        </form>
+                            <form method="POST" action="{{ route('admin.stalls.destroy', $stall) }}"
+                                  data-confirm="Remove this stall and its payment history?">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" title="Delete stall" aria-label="Delete stall"
+                                        class="inline-flex size-10 items-center justify-center rounded-lg bg-red-600 text-white hover:bg-red-700">
+                                    <svg class="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
             @empty
@@ -55,14 +103,16 @@
     </table>
 </div>
 
-@if ($stalls->hasPages())
-    <div class="mt-4 flex items-center justify-end gap-3 text-sm">
-        @unless ($stalls->onFirstPage())
-            <a data-page href="{{ $stalls->previousPageUrl() }}" class="text-blue-600 hover:underline">&laquo; Previous</a>
-        @endunless
-        <span>Page {{ $stalls->currentPage() }} of {{ $stalls->lastPage() }}</span>
-        @if ($stalls->hasMorePages())
-            <a data-page href="{{ $stalls->nextPageUrl() }}" class="text-blue-600 hover:underline">Next &raquo;</a>
-        @endif
-    </div>
-@endif
+<div id="stall-pager">
+    @if ($stalls->hasPages())
+        <div class="mt-4 flex items-center justify-end gap-3 text-sm">
+            @unless ($stalls->onFirstPage())
+                <a data-page href="{{ $stalls->previousPageUrl() }}" class="text-blue-600 hover:underline">&laquo; Previous</a>
+            @endunless
+            <span>Page {{ $stalls->currentPage() }} of {{ $stalls->lastPage() }}</span>
+            @if ($stalls->hasMorePages())
+                <a data-page href="{{ $stalls->nextPageUrl() }}" class="text-blue-600 hover:underline">Next &raquo;</a>
+            @endif
+        </div>
+    @endif
+</div>

@@ -11,17 +11,23 @@ document.addEventListener('click', function (e) {
     document.getElementById('edit-stall-dialog').showModal();
 });
 
-// Live search / filter / pagination for the stall list.
+// Live per-column search / filter / pagination for the stall list.
 var results = document.getElementById('stall-results');
 var filterBox = document.getElementById('stall-filters');
 var baseUrl = filterBox.dataset.url;
 var timer = null;
+var reqId = 0;
 
 function load(url) {
+    var req = ++reqId;
     fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
         .then(function (r) { return r.text(); })
         .then(function (html) {
-            results.innerHTML = html;
+            if (req !== reqId) return; // a newer search already started
+            var doc = new DOMParser().parseFromString(html, 'text/html');
+            // Swap only the rows and pager so the search boxes keep focus while typing.
+            document.getElementById('stall-body').innerHTML = doc.getElementById('stall-body').innerHTML;
+            document.getElementById('stall-pager').innerHTML = doc.getElementById('stall-pager').innerHTML;
             history.replaceState(null, '', url);
         });
 }
@@ -35,11 +41,20 @@ function buildUrl() {
     return baseUrl + (qs ? '?' + qs : '');
 }
 
-filterBox.addEventListener('input', function () {
+// Text boxes search while typing (short pause so it doesn't fire on every key).
+filterBox.addEventListener('input', function (e) {
+    if (e.target.type !== 'text') return;
     clearTimeout(timer);
     timer = setTimeout(function () { load(buildUrl()); }, 300);
 });
-filterBox.addEventListener('change', function () { load(buildUrl()); });
+
+// Dropdown and date pick search immediately.
+filterBox.addEventListener('change', function (e) {
+    if (e.target.tagName === 'SELECT' || e.target.type === 'date') {
+        clearTimeout(timer);
+        load(buildUrl());
+    }
+});
 
 results.addEventListener('click', function (e) {
     var pageLink = e.target.closest('[data-page]');

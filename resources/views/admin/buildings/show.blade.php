@@ -48,25 +48,6 @@
 
     {{-- Stall list --}}
     <div class="rounded-xl bg-white p-5 shadow-sm">
-        <div id="stall-filters" class="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-3"
-             data-url="{{ route('admin.buildings.show', $building) }}">
-            <div class="sm:col-span-2">
-                <label for="sf-search" class="mb-1 block text-sm font-medium">Search</label>
-                <input type="text" id="sf-search" name="search" value="{{ request('search') }}" placeholder="Person name or stall no."
-                       class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
-            </div>
-            <div>
-                <label for="sf-status" class="mb-1 block text-sm font-medium">Status</label>
-                <select id="sf-status" name="status" class="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm">
-                    <option value="">All statuses</option>
-                    <option value="paid" @selected(request('status') === 'paid')>Paid</option>
-                    <option value="partial" @selected(request('status') === 'partial')>Partial</option>
-                    <option value="unpaid" @selected(request('status') === 'unpaid')>Unpaid</option>
-                    <option value="overdue" @selected(request('status') === 'overdue')>Overdue</option>
-                </select>
-            </div>
-        </div>
-
         <div id="stall-results">
             @include('admin.buildings.partials.stall-results')
         </div>

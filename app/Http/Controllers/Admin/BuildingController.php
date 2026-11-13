@@ -34,11 +34,17 @@ class BuildingController extends Controller
             ->loadSum('stalls as expected', 'amount');
 
         $stalls = $building->stalls()
-            ->when($request->filled('search'), function ($q) use ($request) {
-                $term = '%' . $request->input('search') . '%';
-                $q->where(fn ($w) => $w->where('tenant_name', 'like', $term)
-                    ->orWhere('stall_no', 'like', $term));
+            ->when($request->filled('stall_no'), fn ($q) =>
+                $q->where('stall_no', 'like', '%' . $request->input('stall_no') . '%'))
+            ->when($request->filled('tenant'), fn ($q) =>
+                $q->where('tenant_name', 'like', '%' . $request->input('tenant') . '%'))
+            ->when($request->filled('amount'), function ($q) use ($request) {
+                $term = '%' . str_replace(',', '', $request->input('amount')) . '%';
+                $q->where(fn ($w) => $w->where('amount', 'like', $term)
+                    ->orWhere('amount_paid', 'like', $term));
             })
+            ->when($request->filled('due_date'), fn ($q) =>
+                $q->whereDate('due_date', $request->input('due_date')))
             ->when($request->filled('status'), fn ($q) => $q->ofStatus($request->input('status')))
             ->orderBy('stall_no')
             ->paginate(15)
