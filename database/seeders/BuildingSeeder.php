@@ -10,26 +10,28 @@ class BuildingSeeder extends Seeder
     public function run(): void
     {
         $buildings = [
-            ['b7a', 'BLDG. 7A', '7A', 1500],
-            ['b2',  'BLDG. 2',  'B2', 1800],
-            ['b1',  'BLDG. 1',  'B1', 1800],
-            ['b5',  'BLDG. 5',  'B5', 2000],
-            ['b4',  'BLDG. 4',  'B4', 1600],
-            ['b6',  'BLDG. 6',  'B6', 2200],
-            ['b3',  'BLDG. 3',  'B3', 1600],
-            ['b7',  'BLDG. 7',  'B7', 1500],
-            ['rl',  'ROW L',    'RL', 1200],
-            ['rk',  'ROW K',    'RK', 1200],
-            ['bw',  'BAYWALK',  'BW', 2500],
-            ['p1',  'PAINITAN SEC. 1', 'P1', 1400],
-            ['p2',  'PAINITAN SEC. 2', 'P2', 1400],
-            ['p3',  'PAINITAN SEC. 3', 'P3', 1400],
+            ['b1',   'BLDG. 1',         'B1',   1800],
+            ['b2',   'BLDG. 2',         'B2',   1800],
+            ['b3',   'BLDG. 3',         'B3',   1600],
+            ['b4',   'BLDG. 4',         'B4',   1600],
+            ['b5',   'BLDG. 5',         'B5',   2000],
+            ['b7',   'BLDG. 7 1ST FL.', '7-1F', 1500],
+            ['b7f2', 'BLDG. 7 2ND FL.', '7-2F', 1500],
+            ['b7a',  'BLDG. 7A',        '7A',   1500],
+            ['b7b',  'BLDG. 7B',        '7B',   1500],
+            ['rk',   'ROW K',           'RK',   1200],
+            ['rl',   'ROW L',           'RL',   1200],
+            ['vs',   'VEG. SEC.',       'VS',   1200],
+            ['ds',   'DRIED SEC.',      'DS',   1200],
+            ['ms',   'MEAT SEC.',       'MS',   1200],
+            ['p1',   'PAINITAN SEC.',   'P1',   1400],
+            ['fs',   'FISH SEC.',       'FS',   1200],
         ];
 
-        foreach ($buildings as [$code, $name, $short, $rent]) {
+        foreach ($buildings as $i => [$code, $name, $short, $rent]) {
             Building::updateOrCreate(
                 ['code' => $code],
-                ['name' => $name, 'short' => $short, 'rent' => $rent]
+                ['name' => $name, 'short' => $short, 'rent' => $rent, 'sort' => $i]
             );
         }
     }

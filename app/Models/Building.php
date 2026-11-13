@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Building extends Model
 {
-    protected $fillable = ['code', 'name', 'short', 'rent'];
+    protected $fillable = ['code', 'name', 'short', 'rent', 'sort'];
 
     public function stalls(): HasMany
     {

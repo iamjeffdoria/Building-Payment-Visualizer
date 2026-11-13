@@ -17,7 +17,7 @@ class BuildingController extends Controller
                 $q->where(fn ($w) => $w->where('name', 'like', $term)
                     ->orWhere('short', 'like', $term));
             })
-            ->orderBy('name')
+            ->orderBy('sort')
             ->get();
 
         if ($request->ajax()) {

@@ -10,15 +10,11 @@ var BUILDINGS = [
     { id: 'b1',  label: 'BLDG. 1',  x: 485, y: 9,   w: 170, h: 52 },
     { id: 'b5',  label: 'BLDG. 5',  x: 392, y: 112, w: 172, h: 50 },
     { id: 'b4',  label: 'BLDG. 4',  x: 288, y: 112, w: 55,  h: 196, v: true },
-    { id: 'b6',  label: 'BLDG. 6',  x: 392, y: 183, w: 178, h: 124 },
     { id: 'b3',  label: 'BLDG. 3',  x: 612, y: 110, w: 56,  h: 195, v: true },
-    { id: 'b7',  label: 'BLDG. 7',  x: 35,  y: 240, w: 200, h: 70 },
+    { id: 'b7',  label: 'BLDG. 7 1ST FL.', x: 35,  y: 240, w: 200, h: 70, fs: 10 },
     { id: 'rl',  label: 'ROW L',    x: 23,  y: 350, w: 217, h: 48 },
     { id: 'rk',  label: 'ROW K',    x: 254, y: 348, w: 134, h: 47 },
-    { id: 'bw',  label: 'BAYWALK',  x: 390, y: 344, w: 335, h: 61, fs: 15 },
-    { id: 'p1',  label: 'PAINITAN SEC. 1', x: 720, y: 258, w: 170, h: 27, fs: 9 },
-    { id: 'p2',  label: 'PAINITAN SEC. 2', x: 725, y: 300, w: 138, h: 35, fs: 9 },
-    { id: 'p3',  label: 'PAINITAN SEC. 3', x: 730, y: 360, w: 135, h: 35, fs: 9 }
+    { id: 'p1',  label: 'PAINITAN SEC.', x: 720, y: 258, w: 170, h: 27, fs: 9 }
 ];
 
 // Non-interactive landmarks
