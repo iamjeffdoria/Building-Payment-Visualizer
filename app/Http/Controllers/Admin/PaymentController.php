@@ -15,7 +15,7 @@ class PaymentController extends Controller
         $validated = $request->validate([
             'amount' => ['required', 'numeric', 'min:0.01'],
             'paid_on' => ['required', 'date', 'before_or_equal:today'],
-            'note' => ['nullable', 'string', 'max:255'],
+            'note' => ['nullable', 'string', 'max:20'],
         ]);
 
         $amount = round((float) $validated['amount'], 2);

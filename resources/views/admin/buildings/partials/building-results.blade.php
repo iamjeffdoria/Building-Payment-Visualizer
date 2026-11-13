@@ -1,5 +1,5 @@
 <div class="overflow-x-auto">
-    <table class="w-full min-w-[820px] text-left text-sm">
+    <table class="w-full min-w-[980px] text-left text-sm">
         <thead>
             <tr class="text-xs uppercase text-gray-500">
                 <th class="w-32 px-2 pb-1 pt-2.5">Actions</th>
@@ -7,6 +7,7 @@
                 <th class="px-2 pb-1 pt-2.5">Stalls</th>
                 <th class="px-2 pb-1 pt-2.5">Fully paid</th>
                 <th class="px-2 pb-1 pt-2.5">Collected</th>
+                <th class="px-2 pb-1 pt-2.5">Collectible</th>
                 <th class="px-2 pb-1 pt-2.5">Default rent</th>
             </tr>
             <tr id="building-filters" data-url="{{ route('admin.buildings') }}" class="border-b border-gray-200">
@@ -32,6 +33,11 @@
                            class="w-full rounded-md border border-gray-300 bg-white px-2.5 py-2 text-sm text-gray-800">
                 </th>
                 <th class="px-2 pb-2.5 font-normal">
+                    <input type="text" name="collectible" value="{{ request('collectible') }}" placeholder="Search balance"
+                           aria-label="Search by collectible amount" inputmode="decimal"
+                           class="w-full rounded-md border border-gray-300 bg-white px-2.5 py-2 text-sm text-gray-800">
+                </th>
+                <th class="px-2 pb-2.5 font-normal">
                     <input type="text" name="rent" value="{{ request('rent') }}" placeholder="Search rent"
                            aria-label="Search by default rent" inputmode="decimal"
                            class="w-full rounded-md border border-gray-300 bg-white px-2.5 py-2 text-sm text-gray-800">
@@ -44,6 +50,7 @@
                     $collected = (float) ($building->collected ?? 0);
                     $expected = (float) ($building->expected ?? 0);
                     $pct = $expected > 0 ? (int) round($collected / $expected * 100) : 0;
+                    $collectible = max(0, $expected - $collected);
                 @endphp
                 <tr class="border-b border-gray-100">
                     <td class="px-2 py-2.5">
@@ -59,10 +66,11 @@
                             <div class="h-full bg-green-500" style="width: {{ $pct }}%"></div>
                         </div>
                     </td>
+                    <td class="whitespace-nowrap px-2 py-2.5 font-medium {{ $collectible > 0 ? 'text-amber-700' : 'text-green-700' }}">₱{{ number_format($collectible, 2) }}</td>
                     <td class="px-2 py-2.5">₱{{ number_format($building->rent, 2) }}</td>
                 </tr>
             @empty
-                <tr><td colspan="6" class="px-2 py-3 text-gray-500">No buildings found.</td></tr>
+                <tr><td colspan="7" class="px-2 py-3 text-gray-500">No buildings found.</td></tr>
             @endforelse
         </tbody>
     </table>

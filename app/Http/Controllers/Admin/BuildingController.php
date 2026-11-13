@@ -28,6 +28,8 @@ class BuildingController extends Controller
             ->when($request->filled('collected'), fn ($c) => $c->filter(fn ($b) =>
                 str_contains((string) (float) $b->collected, $num('collected'))
                 || str_contains((string) (float) $b->expected, $num('collected'))))
+            ->when($request->filled('collectible'), fn ($c) => $c->filter(fn ($b) =>
+                str_contains((string) max(0, (float) $b->expected - (float) $b->collected), $num('collectible'))))
             ->when($request->filled('rent'), fn ($c) => $c->filter(fn ($b) =>
                 str_contains((string) (float) $b->rent, $num('rent'))))
             ->values();
@@ -58,6 +60,7 @@ class BuildingController extends Controller
             ->when($request->filled('due_date'), fn ($q) =>
                 $q->whereDate('due_date', $request->input('due_date')))
             ->when($request->filled('status'), fn ($q) => $q->ofStatus($request->input('status')))
+            ->orderByRaw('LENGTH(stall_no)')
             ->orderBy('stall_no')
             ->paginate(20)
             ->withQueryString();
@@ -72,7 +75,10 @@ class BuildingController extends Controller
     // Server-rendered hover panel for the dashboard map
     public function panel(Request $request, Building $building)
     {
-        $stalls = $building->stalls()->orderBy('stall_no')->get();
+        $stalls = $building->stalls()
+            ->orderByRaw('LENGTH(stall_no)')
+            ->orderBy('stall_no')
+            ->get();
         $counts = $stalls->countBy(fn ($s) => $s->status);
 
         $summary = [

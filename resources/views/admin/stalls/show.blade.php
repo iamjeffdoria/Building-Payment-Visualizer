@@ -81,7 +81,7 @@
                 </div>
                 <div class="sm:col-span-2">
                     <label for="pay-note" class="mb-1 block text-sm font-medium">Note <span class="text-xs text-gray-500">(optional, e.g. OR number)</span></label>
-                    <input type="text" id="pay-note" name="note" value="{{ old('note') }}" maxlength="255"
+                    <input type="text" id="pay-note" name="note" value="{{ old('note') }}" maxlength="20"
                            class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
                 </div>
                 <div class="sm:col-span-2">
@@ -97,11 +97,11 @@
     <div class="rounded-xl bg-white p-5 shadow-sm">
         <strong>Payment history</strong>
         <div class="mt-3 overflow-x-auto">
-            <table class="w-full text-left text-sm">
+            <table class="w-full min-w-[520px] table-fixed text-left text-sm">
                 <thead>
                     <tr class="border-b border-gray-200 text-xs uppercase text-gray-500">
-                        <th class="px-2 py-2.5">Date</th>
-                        <th class="px-2 py-2.5">Amount</th>
+                        <th class="w-40 px-2 py-2.5">Date</th>
+                        <th class="w-32 px-2 py-2.5">Amount</th>
                         <th class="px-2 py-2.5">Note</th>
                         <th class="w-24 px-2 py-2.5">Actions</th>
                     </tr>
@@ -109,9 +109,9 @@
                 <tbody>
                     @forelse ($stall->payments as $payment)
                         <tr class="border-b border-gray-100">
-                            <td class="px-2 py-2.5">{{ $payment->paid_on->format('M j, Y') }}</td>
-                            <td class="px-2 py-2.5 font-medium">₱{{ number_format($payment->amount, 2) }}</td>
-                            <td class="px-2 py-2.5 text-gray-600">{{ $payment->note ?? '—' }}</td>
+                            <td class="px-2 py-2.5" style="white-space: nowrap;">{{ $payment->paid_on->format('M j, Y') }}</td>
+                            <td class="whitespace-nowrap px-2 py-2.5 font-medium">₱{{ number_format($payment->amount, 2) }}</td>
+                            <td class="truncate px-2 py-2.5 text-gray-600" title="{{ $payment->note }}">{{ $payment->note ? \Illuminate\Support\Str::limit($payment->note, 20) : '—' }}</td>
                             <td class="px-2 py-2.5">
                                 <form method="POST" action="{{ route('admin.payments.destroy', $payment) }}"
                                       data-confirm="Remove this payment?">
