@@ -1,6 +1,6 @@
-<div class="overflow-x-auto">
+<div class="max-h-[65vh] overflow-auto rounded-lg border border-gray-200 [scrollbar-color:#cbd5e1_transparent] [scrollbar-width:thin]">
     <table class="w-full min-w-[860px] text-left text-sm">
-        <thead>
+        <thead class="sticky top-0 z-10 bg-white shadow-[0_1px_0_0_#e5e7eb]">
             <tr class="text-xs uppercase text-gray-500">
                 <th class="w-40 px-2 pb-1 pt-2.5">Actions</th>
                 <th class="px-2 pb-1 pt-2.5">Stall</th>
