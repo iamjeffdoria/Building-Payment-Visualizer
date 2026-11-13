@@ -62,9 +62,9 @@
                         <span class="rounded-full px-2 py-0.5 text-xs {{ \App\Models\Stall::STATUS_BADGES[$status] }}">{{ ucfirst($status) }}</span>
                     </td>
                     <td class="px-2 py-2.5">
-                        <div class="flex items-center gap-2">
+                        <div class="inline-flex divide-x divide-white/50 overflow-hidden rounded-lg shadow-sm">
                             <a href="{{ route('admin.stalls.show', $stall) }}" title="Payments" aria-label="Payments"
-                               class="inline-flex size-10 items-center justify-center rounded-lg bg-green-600 text-white hover:bg-green-700">
+                               class="inline-flex size-10 items-center justify-center bg-green-600 text-white hover:bg-green-700">
                                 <svg class="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                                 </svg>
@@ -76,18 +76,18 @@
                                     data-name="{{ $stall->tenant_name }}"
                                     data-amount="{{ $stall->amount }}"
                                     data-due="{{ $stall->due_date?->format('Y-m-d') }}"
-                                    class="inline-flex size-10 items-center justify-center rounded-lg bg-blue-600 text-white hover:bg-blue-700">
+                                    class="inline-flex size-10 items-center justify-center bg-amber-500 text-white hover:bg-amber-600">
                                 <svg class="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                 </svg>
                             </button>
 
-                            <form method="POST" action="{{ route('admin.stalls.destroy', $stall) }}"
+                            <form method="POST" action="{{ route('admin.stalls.destroy', $stall) }}" class="flex"
                                   data-confirm="Remove this stall and its payment history?">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" title="Delete stall" aria-label="Delete stall"
-                                        class="inline-flex size-10 items-center justify-center rounded-lg bg-red-600 text-white hover:bg-red-700">
+                                        class="inline-flex size-10 items-center justify-center bg-red-600 text-white hover:bg-red-700">
                                     <svg class="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                     </svg>
