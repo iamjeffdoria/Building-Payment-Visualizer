@@ -4,9 +4,7 @@
 @section('active', 'buildings')
 
 @section('content')
-    <h1 class="mb-5 text-2xl font-semibold">Buildings</h1>
-
-    <div class="rounded-xl bg-white p-5 shadow-sm">
+    <div class="rounded-xl bg-white p-4 shadow-sm">
         <div id="building-results">
             @include('admin.buildings.partials.building-results')
         </div>

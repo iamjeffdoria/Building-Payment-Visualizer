@@ -1,37 +1,44 @@
 <div class="max-h-[65vh] overflow-auto rounded-lg border border-gray-200 [scrollbar-color:#cbd5e1_transparent] [scrollbar-width:thin]">
-    <table class="w-full min-w-[860px] text-left text-sm">
-        <thead class="sticky top-0 z-10 bg-white shadow-[0_1px_0_0_#e5e7eb]">
-            <tr class="text-xs uppercase text-gray-500">
-                <th class="w-40 px-2 pb-1 pt-2.5">Actions</th>
-                <th class="px-2 pb-1 pt-2.5">Stall</th>
-                <th class="px-2 pb-1 pt-2.5">Person</th>
-                <th class="px-2 pb-1 pt-2.5">Paid / Due</th>
-                <th class="px-2 pb-1 pt-2.5">Due date</th>
-                <th class="px-2 pb-1 pt-2.5">Status</th>
+    <style>
+        .tbl-sticky { border-collapse: separate; border-spacing: 0; }
+        .tbl-sticky thead { position: sticky; top: 0; z-index: 10; }
+        .tbl-sticky thead tr:first-child th { background: #f9fafb; border-bottom: 1px solid #e5e7eb; }
+        .tbl-sticky thead tr:last-child th { background: #ffffff; border-bottom: 1px solid #e5e7eb; }
+        .tbl-sticky tbody td { border-bottom: 1px solid #f3f4f6; }
+    </style>
+    <table class="tbl-sticky w-full min-w-[860px] text-left text-sm">
+        <thead>
+            <tr class="border-b border-gray-200 bg-gray-50 text-xs uppercase text-gray-500">
+                <th class="w-40 px-2 py-2.5">Actions</th>
+                <th class="px-2 py-2.5">Stall</th>
+                <th class="px-2 py-2.5">Person</th>
+                <th class="px-2 py-2.5">Paid / Due</th>
+                <th class="px-2 py-2.5">Due date</th>
+                <th class="px-2 py-2.5">Status</th>
             </tr>
             <tr id="stall-filters" data-url="{{ route('admin.buildings.show', $building) }}" class="border-b border-gray-200">
-                <th class="px-2 pb-2.5"></th>
-                <th class="px-2 pb-2.5 font-normal">
-                    <input type="text" name="stall_no" value="{{ request('stall_no') }}" placeholder="Search stall"
+                <th class="px-2 py-2.5"></th>
+                <th class="px-2 py-2.5 font-normal">
+                    <input type="text" name="stall_no" value="{{ request('stall_no') }}" 
                            aria-label="Search by stall number"
                            class="w-full rounded-md border border-gray-300 bg-white px-2.5 py-2 text-sm text-gray-800">
                 </th>
-                <th class="px-2 pb-2.5 font-normal">
-                    <input type="text" name="tenant" value="{{ request('tenant') }}" placeholder="Search person"
+                <th class="px-2 py-2.5 font-normal">
+                    <input type="text" name="tenant" value="{{ request('tenant') }}" 
                            aria-label="Search by person name"
                            class="w-full rounded-md border border-gray-300 bg-white px-2.5 py-2 text-sm text-gray-800">
                 </th>
-                <th class="px-2 pb-2.5 font-normal">
-                    <input type="text" name="amount" value="{{ request('amount') }}" placeholder="Search amount"
+                <th class="px-2 py-2.5 font-normal">
+                    <input type="text" name="amount" value="{{ request('amount') }}"
                            aria-label="Search by amount" inputmode="decimal"
                            class="w-full rounded-md border border-gray-300 bg-white px-2.5 py-2 text-sm text-gray-800">
                 </th>
-                <th class="px-2 pb-2.5 font-normal">
+                <th class="px-2 py-2.5 font-normal">
                     <input type="date" name="due_date" value="{{ request('due_date') }}"
                            aria-label="Filter by due date"
                            class="w-full rounded-md border border-gray-300 bg-white px-2.5 py-2 text-sm text-gray-800">
                 </th>
-                <th class="px-2 pb-2.5 font-normal">
+                <th class="px-2 py-2.5 font-normal">
                     <select name="status" aria-label="Filter by status"
                             class="w-full rounded-md border border-gray-300 bg-white px-2.5 py-2 text-sm text-gray-800">
                         <option value="">All</option>

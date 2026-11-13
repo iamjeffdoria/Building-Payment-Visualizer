@@ -9,42 +9,41 @@
 @endphp
 
 @section('content')
-    <div class="mb-5">
+    <div class="mb-3 flex flex-wrap items-center" style="gap: 0.5rem 1.25rem;">
         <a href="{{ route('admin.buildings.show', $stall->building) }}"
-           class="inline-flex items-center gap-1.5 rounded-md border border-blue-200 bg-blue-50 px-3 py-1.5 text-sm font-medium text-blue-700 transition-colors hover:border-blue-300 hover:bg-blue-100 hover:text-blue-800">
-            <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+           class="inline-flex items-center gap-1 rounded-md border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700 transition-colors hover:border-blue-300 hover:bg-blue-100 hover:text-blue-800">
+            <svg class="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
             {{ $stall->building->name }}
         </a>
-        <div class="mt-1 flex flex-wrap items-center gap-3">
-            <h1 class="text-2xl font-semibold">{{ $stall->stall_no }} &middot; {{ $stall->tenant_name }}</h1>
-            <span class="rounded-full px-2 py-0.5 text-xs {{ $badge }}">{{ ucfirst($status) }}</span>
-        </div>
+        <h1 class="text-lg font-semibold leading-tight">{{ $stall->stall_no }} &middot; {{ $stall->tenant_name }}</h1>
+        <span style="width: 1px; height: 1.25rem; background: #d1d5db;"></span>
+        <span class="rounded-full px-2 py-0.5 text-xs {{ $badge }}">{{ ucfirst($status) }}</span>
     </div>
 
     {{-- Summary --}}
-    <div class="mb-5 rounded-xl bg-white p-5 shadow-sm">
+    <div class="mb-3 rounded-xl bg-white p-4 shadow-sm">
         <div class="grid grid-cols-2 gap-3 text-center sm:grid-cols-4">
-            <div class="rounded-lg bg-gray-50 p-3">
-                <div class="text-lg font-semibold">₱{{ number_format($stall->amount, 2) }}</div>
+            <div class="rounded-lg bg-gray-50 px-3 py-2">
+                <div class="text-base font-semibold">₱{{ number_format($stall->amount, 2) }}</div>
                 <div class="text-xs text-gray-500">Amount due</div>
             </div>
-            <div class="rounded-lg bg-green-50 p-3">
-                <div class="text-lg font-semibold text-green-800">₱{{ number_format($stall->amount_paid, 2) }}</div>
+            <div class="rounded-lg bg-green-50 px-3 py-2">
+                <div class="text-base font-semibold text-green-800">₱{{ number_format($stall->amount_paid, 2) }}</div>
                 <div class="text-xs text-gray-500">Paid so far</div>
             </div>
-            <div class="rounded-lg bg-amber-50 p-3">
-                <div class="text-lg font-semibold text-amber-800">₱{{ number_format($stall->balance, 2) }}</div>
+            <div class="rounded-lg bg-amber-50 px-3 py-2">
+                <div class="text-base font-semibold text-amber-800">₱{{ number_format($stall->balance, 2) }}</div>
                 <div class="text-xs text-gray-500">Balance</div>
             </div>
-            <div class="rounded-lg bg-gray-50 p-3">
-                <div class="text-lg font-semibold">{{ $stall->due_date?->format('M j, Y') ?? '—' }}</div>
+            <div class="rounded-lg bg-gray-50 px-3 py-2">
+                <div class="text-base font-semibold">{{ $stall->due_date?->format('M j, Y') ?? '—' }}</div>
                 <div class="text-xs text-gray-500">Due date</div>
             </div>
         </div>
 
-        <div class="mt-4">
+        <div class="mt-3">
             <div class="mb-1 flex justify-between text-xs text-gray-500">
                 <span>Progress</span><span>{{ $stall->percent_paid }}%</span>
             </div>
@@ -55,10 +54,10 @@
     </div>
 
     {{-- Record payment + History: side by side on desktop, stacked on mobile --}}
-    <div class="grid grid-cols-1 gap-5 lg:grid-cols-2 lg:items-start">
+    <div class="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:items-start">
 
     {{-- Record payment --}}
-    <div class="rounded-xl bg-white p-5 shadow-sm">
+    <div class="rounded-xl bg-white p-4 shadow-sm">
         <strong>Record a payment</strong>
 
         @if ($stall->balance > 0)
@@ -94,7 +93,7 @@
     </div>
 
     {{-- History --}}
-    <div class="rounded-xl bg-white p-5 shadow-sm">
+    <div class="rounded-xl bg-white p-4 shadow-sm">
         <strong>Payment history</strong>
         <div class="mt-3 overflow-x-auto">
             <table class="w-full min-w-[520px] table-fixed text-left text-sm">

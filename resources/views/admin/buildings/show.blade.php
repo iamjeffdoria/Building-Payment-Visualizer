@@ -4,15 +4,16 @@
 @section('active', 'buildings')
 
 @section('content')
-    <div class="mb-5">
+    <div class="mb-3 flex flex-wrap items-center" style="gap: 0.5rem 1.25rem;">
         <a href="{{ route('admin.buildings') }}"
-           class="inline-flex items-center gap-1.5 rounded-md border border-blue-200 bg-blue-50 px-3 py-1.5 text-sm font-medium text-blue-700 transition-colors hover:border-blue-300 hover:bg-blue-100 hover:text-blue-800">
-            <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+           class="inline-flex items-center gap-1 rounded-md border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700 transition-colors hover:border-blue-300 hover:bg-blue-100 hover:text-blue-800">
+            <svg class="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
             All buildings
         </a>
-        <h1 class="mt-1 text-2xl font-semibold">{{ $building->name }}</h1>
+        <h1 class="text-lg font-semibold leading-tight">{{ $building->name }}</h1>
+        <span style="width: 1px; height: 1.25rem; background: #d1d5db;"></span>
         <p class="text-sm text-gray-500">
             {{ $building->stalls_count }} stalls
             &middot; Collected ₱{{ number_format($building->collected ?? 0, 2) }} of ₱{{ number_format($building->expected ?? 0, 2) }}
@@ -21,11 +22,10 @@
     </div>
 
     {{-- Stall list --}}
-    <div class="rounded-xl bg-white p-5 shadow-sm">
-        <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
-            <strong>Stalls</strong>
+    <div class="rounded-xl bg-white p-4 shadow-sm">
+        <div class="mb-2 flex justify-end">
             <button type="button" data-open="create-stall-dialog"
-                    class="rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700">+ Add stall</button>
+                    class="rounded-md bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700">+ Add stall</button>
         </div>
         <div id="stall-results">
             @include('admin.buildings.partials.stall-results')

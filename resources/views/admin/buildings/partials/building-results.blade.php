@@ -1,44 +1,52 @@
-<div class="overflow-x-auto">
-    <table class="w-full min-w-[980px] text-left text-sm">
+<div class="rounded-lg border border-gray-200"
+     style="max-height: calc(100dvh - 10rem); min-height: 15rem; overflow-x: hidden; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent;">
+    <style>
+        .tbl-sticky { border-collapse: separate; border-spacing: 0; }
+        .tbl-sticky thead { position: sticky; top: 0; z-index: 10; }
+        .tbl-sticky thead tr:first-child th { background: #f9fafb; border-bottom: 1px solid #e5e7eb; }
+        .tbl-sticky thead tr:last-child th { background: #ffffff; border-bottom: 1px solid #e5e7eb; }
+        .tbl-sticky tbody td { border-bottom: 1px solid #f3f4f6; }
+    </style>
+    <table class="tbl-sticky w-full text-left text-sm">
         <thead>
-            <tr class="text-xs uppercase text-gray-500">
-                <th class="w-32 px-2 pb-1 pt-2.5">Actions</th>
-                <th class="px-2 pb-1 pt-2.5">Building</th>
-                <th class="px-2 pb-1 pt-2.5">Stalls</th>
-                <th class="px-2 pb-1 pt-2.5">Fully paid</th>
-                <th class="px-2 pb-1 pt-2.5">Collected</th>
-                <th class="px-2 pb-1 pt-2.5">Collectible</th>
-                <th class="px-2 pb-1 pt-2.5">Default rent</th>
+            <tr class="border-b border-gray-200 bg-gray-50 text-xs uppercase text-gray-500">
+                <th class="w-32 px-2 py-2.5">Actions</th>
+                <th class="px-2 py-2.5">Building</th>
+                <th class="px-2 py-2.5">Stalls</th>
+                <th class="px-2 py-2.5">Fully paid</th>
+                <th class="px-2 py-2.5">Collected</th>
+                <th class="px-2 py-2.5">Collectible</th>
+                <th class="px-2 py-2.5">Default rent</th>
             </tr>
             <tr id="building-filters" data-url="{{ route('admin.buildings') }}" class="border-b border-gray-200">
-                <th class="px-2 pb-2.5"></th>
-                <th class="px-2 pb-2.5 font-normal">
-                    <input type="text" name="name" value="{{ request('name') }}" placeholder="Search building"
+                <th class="px-2 py-2.5"></th>
+                <th class="px-2 py-2.5 font-normal">
+                    <input type="text" name="name" value="{{ request('name') }}"
                            aria-label="Search by building name"
                            class="w-full rounded-md border border-gray-300 bg-white px-2.5 py-2 text-sm text-gray-800">
                 </th>
-                <th class="px-2 pb-2.5 font-normal">
-                    <input type="text" name="stalls" value="{{ request('stalls') }}" placeholder="Search stalls"
+                <th class="px-2 py-2.5 font-normal">
+                    <input type="text" name="stalls" value="{{ request('stalls') }}" 
                            aria-label="Search by number of stalls" inputmode="numeric"
                            class="w-full rounded-md border border-gray-300 bg-white px-2.5 py-2 text-sm text-gray-800">
                 </th>
-                <th class="px-2 pb-2.5 font-normal">
-                    <input type="text" name="paid" value="{{ request('paid') }}" placeholder="Search paid"
+                <th class="px-2 py-2.5 font-normal">
+                    <input type="text" name="paid" value="{{ request('paid') }}"
                            aria-label="Search by number of fully paid stalls" inputmode="numeric"
                            class="w-full rounded-md border border-gray-300 bg-white px-2.5 py-2 text-sm text-gray-800">
                 </th>
-                <th class="px-2 pb-2.5 font-normal">
-                    <input type="text" name="collected" value="{{ request('collected') }}" placeholder="Search amount"
+                <th class="px-2 py-2.5 font-normal">
+                    <input type="text" name="collected" value="{{ request('collected') }}"
                            aria-label="Search by collected amount" inputmode="decimal"
                            class="w-full rounded-md border border-gray-300 bg-white px-2.5 py-2 text-sm text-gray-800">
                 </th>
-                <th class="px-2 pb-2.5 font-normal">
-                    <input type="text" name="collectible" value="{{ request('collectible') }}" placeholder="Search balance"
+                <th class="px-2 py-2.5 font-normal">
+                    <input type="text" name="collectible" value="{{ request('collectible') }}"
                            aria-label="Search by collectible amount" inputmode="decimal"
                            class="w-full rounded-md border border-gray-300 bg-white px-2.5 py-2 text-sm text-gray-800">
                 </th>
-                <th class="px-2 pb-2.5 font-normal">
-                    <input type="text" name="rent" value="{{ request('rent') }}" placeholder="Search rent"
+                <th class="px-2 py-2.5 font-normal">
+                    <input type="text" name="rent" value="{{ request('rent') }}"
                            aria-label="Search by default rent" inputmode="decimal"
                            class="w-full rounded-md border border-gray-300 bg-white px-2.5 py-2 text-sm text-gray-800">
                 </th>
