@@ -48,13 +48,16 @@
         </div>
     </div>
 
+    {{-- Record payment + History: side by side on desktop, stacked on mobile --}}
+    <div class="grid grid-cols-1 gap-5 lg:grid-cols-2 lg:items-start">
+
     {{-- Record payment --}}
-    <div class="mb-5 rounded-xl bg-white p-5 shadow-sm">
+    <div class="rounded-xl bg-white p-5 shadow-sm">
         <strong>Record a payment</strong>
 
         @if ($stall->balance > 0)
             <form method="POST" action="{{ route('admin.payments.store', $stall) }}"
-                  class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                  class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 @csrf
                 <div>
                     <label for="pay-amount" class="mb-1 block text-sm font-medium">Amount</label>
@@ -70,12 +73,12 @@
                            max="{{ now()->toDateString() }}" required
                            class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
                 </div>
-                <div class="lg:col-span-2">
+                <div class="sm:col-span-2">
                     <label for="pay-note" class="mb-1 block text-sm font-medium">Note <span class="text-xs text-gray-500">(optional, e.g. OR number)</span></label>
                     <input type="text" id="pay-note" name="note" value="{{ old('note') }}" maxlength="255"
                            class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
                 </div>
-                <div class="sm:col-span-2 lg:col-span-4">
+                <div class="sm:col-span-2">
                     <button type="submit" class="rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700">Save payment</button>
                 </div>
             </form>
@@ -118,6 +121,8 @@
                 </tbody>
             </table>
         </div>
+    </div>
+
     </div>
 @endsection
 

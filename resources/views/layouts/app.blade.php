@@ -11,25 +11,29 @@
 <div class="group/layout min-h-screen lg:flex">
     <x-sidebar :active="trim($__env->yieldContent('active'))" />
 
-    <main class="min-w-0 flex-1 px-4 pb-6 pt-16 transition-all duration-300 ease-in-out sm:px-7 sm:pb-7 lg:ml-60 lg:pt-7 lg:group-has-[#sidebar-collapse:checked]/layout:ml-16">
-        @if (session('greeting'))
-            <div class="mb-4 rounded-md bg-green-100 px-4 py-3 text-sm text-green-800">{{ session('greeting') }}</div>
-        @endif
-        @if (session('success'))
-            <div class="mb-4 rounded-md bg-green-100 px-4 py-3 text-sm text-green-800">{{ session('success') }}</div>
-        @endif
-        @if ($errors->any())
-            <div class="mb-4 rounded-md bg-red-100 px-4 py-3 text-sm text-red-800">
-                <ul class="list-disc pl-5">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+    <div class="min-w-0 flex-1 transition-all duration-300 ease-in-out lg:ml-60 lg:group-has-[#sidebar-collapse:checked]/layout:ml-16">
+        <x-topbar :title="trim($__env->yieldContent('title', 'Dashboard'))" />
 
-        @yield('content')
-    </main>
+        <main class="px-4 pb-6 pt-6 sm:px-7 sm:pb-7">
+            @if (session('greeting'))
+                <div class="mb-4 rounded-md bg-green-100 px-4 py-3 text-sm text-green-800">{{ session('greeting') }}</div>
+            @endif
+            @if (session('success'))
+                <div class="mb-4 rounded-md bg-green-100 px-4 py-3 text-sm text-green-800">{{ session('success') }}</div>
+            @endif
+            @if ($errors->any())
+                <div class="mb-4 rounded-md bg-red-100 px-4 py-3 text-sm text-red-800">
+                    <ul class="list-disc pl-5">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            @yield('content')
+        </main>
+    </div>
 </div>
 
 {{-- Profile dialog (available on every page) --}}

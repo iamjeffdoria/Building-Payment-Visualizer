@@ -3,7 +3,7 @@
 
 <!-- Floating hamburger button (mobile only) -->
 <label for="sidebar-toggle" aria-label="Open menu"
-    class="fixed top-4 left-4 z-50 cursor-pointer rounded-lg bg-gray-900 p-2.5 text-white shadow-lg peer-checked/mobile:hidden lg:hidden">
+    class="fixed top-3 left-4 z-50 cursor-pointer rounded-lg bg-gray-900 p-2.5 text-white shadow-lg peer-checked/mobile:hidden lg:hidden">
     <svg class="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
     </svg>
@@ -78,39 +78,4 @@
         @endif
     </nav>
 
-    {{-- User / actions --}}
-    <div class="border-t border-white/10 p-3 text-sm">
-        <div class="mb-3 flex items-center gap-2.5 lg:group-has-[#sidebar-collapse:checked]/collapse:justify-center">
-            @if (auth()->user()->photo_url)
-                <img src="{{ auth()->user()->photo_url }}" alt="" class="size-9 shrink-0 rounded-full object-cover">
-            @else
-                <span class="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-gray-700 font-semibold text-white">
-                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                </span>
-            @endif
-            <div class="min-w-0 lg:group-has-[#sidebar-collapse:checked]/collapse:hidden">
-                <div class="truncate">{{ auth()->user()->name }}</div>
-                <small class="text-gray-400">{{ auth()->user()->role }}</small>
-            </div>
-        </div>
-
-        <button type="button" data-open="profile-dialog" title="Edit profile"
-            class="mb-2 flex w-full items-center gap-2.5 rounded-md bg-gray-800 px-3 py-2 text-left hover:bg-gray-700 lg:group-has-[#sidebar-collapse:checked]/collapse:justify-center lg:group-has-[#sidebar-collapse:checked]/collapse:px-0">
-            <svg class="size-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-            </svg>
-            <span class="truncate lg:group-has-[#sidebar-collapse:checked]/collapse:hidden">Edit profile</span>
-        </button>
-
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button type="submit" title="Log out"
-                class="flex w-full items-center gap-2.5 rounded-md bg-gray-800 px-3 py-2 text-left hover:bg-gray-700 lg:group-has-[#sidebar-collapse:checked]/collapse:justify-center lg:group-has-[#sidebar-collapse:checked]/collapse:px-0">
-                <svg class="size-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                </svg>
-                <span class="truncate lg:group-has-[#sidebar-collapse:checked]/collapse:hidden">Log out</span>
-            </button>
-        </form>
-    </div>
 </aside>

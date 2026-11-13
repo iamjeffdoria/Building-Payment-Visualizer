@@ -62,34 +62,3 @@
         </div>
     </div>
 </header>
-
-<script>
-    (function () {
-        var btn = document.getElementById('topbar-profile-btn');
-        var menu = document.getElementById('topbar-profile-menu');
-        if (!btn || !menu) return;
-
-        function setOpen(open) {
-            menu.classList.toggle('hidden', !open);
-            btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-        }
-
-        btn.addEventListener('click', function (e) {
-            e.stopPropagation();
-            setOpen(menu.classList.contains('hidden'));
-        });
-
-        // Close when "Edit profile" is clicked (the layout script opens the dialog).
-        menu.addEventListener('click', function (e) {
-            if (e.target.closest('[data-open]')) setOpen(false);
-        });
-
-        document.addEventListener('click', function (e) {
-            if (!menu.contains(e.target)) setOpen(false);
-        });
-
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') setOpen(false);
-        });
-    })();
-</script>
