@@ -34,5 +34,9 @@ class BuildingSeeder extends Seeder
                 ['name' => $name, 'short' => $short, 'rent' => $rent, 'sort' => $i]
             );
         }
+
+        // Remove any building that is not on the official list.
+        // Their stalls and payments are deleted too (cascade).
+        Building::whereNotIn('code', array_column($buildings, 0))->delete();
     }
 }

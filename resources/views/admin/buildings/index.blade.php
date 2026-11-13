@@ -10,7 +10,7 @@
         <div id="building-filters" class="mb-4" data-url="{{ route('admin.buildings') }}">
             <label for="bf-search" class="mb-1 block text-sm font-medium">Search</label>
             <input type="text" id="bf-search" name="search" value="{{ request('search') }}"
-                   placeholder="Building name (e.g. BLDG. 2, Baywalk)"
+                   placeholder="Building name (e.g. BLDG. 2, ROW K)"
                    class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm sm:max-w-md">
         </div>
 
