@@ -43,22 +43,16 @@ class BuildingController extends Controller
 
     public function show(Request $request, Building $building)
     {
-        $building->loadCount('stalls')
-            ->loadSum('stalls as collected', 'amount_paid')
-            ->loadSum('stalls as expected', 'amount');
+        $building = Building::withStallStats()->findOrFail($building->id);
 
         $stalls = $building->stalls()
+            ->with(['payments' => fn ($q) => $q->where('year', today()->year)])
             ->when($request->filled('stall_no'), fn ($q) =>
                 $q->where('stall_no', 'like', '%' . $request->input('stall_no') . '%'))
             ->when($request->filled('tenant'), fn ($q) =>
                 $q->where('tenant_name', 'like', '%' . $request->input('tenant') . '%'))
-            ->when($request->filled('amount'), function ($q) use ($request) {
-                $term = '%' . str_replace(',', '', $request->input('amount')) . '%';
-                $q->where(fn ($w) => $w->where('amount', 'like', $term)
-                    ->orWhere('amount_paid', 'like', $term));
-            })
-            ->when($request->filled('due_date'), fn ($q) =>
-                $q->whereDate('due_date', $request->input('due_date')))
+            ->when($request->filled('amount'), fn ($q) =>
+                $q->where('amount', 'like', '%' . str_replace(',', '', $request->input('amount')) . '%'))
             ->when($request->filled('status'), fn ($q) => $q->ofStatus($request->input('status')))
             ->orderByRaw('LENGTH(stall_no)')
             ->orderBy('stall_no')
@@ -75,7 +69,11 @@ class BuildingController extends Controller
     // Server-rendered hover panel for the dashboard map
     public function panel(Request $request, Building $building)
     {
+        $year = today()->year;
+        $month = today()->month;
+
         $stalls = $building->stalls()
+            ->with(['payments' => fn ($q) => $q->where('year', $year)])
             ->orderByRaw('LENGTH(stall_no)')
             ->orderBy('stall_no')
             ->get();
@@ -84,11 +82,10 @@ class BuildingController extends Controller
         $summary = [
             'total' => $stalls->count(),
             'paid' => $counts->get('paid', 0),
-            'partial' => $counts->get('partial', 0),
             'unpaid' => $counts->get('unpaid', 0),
             'overdue' => $counts->get('overdue', 0),
-            'collected' => (float) $stalls->sum('amount_paid'),
-            'expected' => (float) $stalls->sum('amount'),
+            'collected' => (float) $stalls->sum(fn ($s) => $s->payments->where('month', '<=', $month)->sum('amount')),
+            'expected' => (float) $stalls->sum('amount') * $month,
         ];
 
         return view('admin.buildings.partials.map-panel', [

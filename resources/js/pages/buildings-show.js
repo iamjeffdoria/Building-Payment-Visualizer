@@ -7,7 +7,6 @@ document.addEventListener('click', function (e) {
     document.getElementById('es-name').value = btn.dataset.name;
     document.getElementById('es-no').value = btn.dataset.stallNo;
     document.getElementById('es-amount').value = btn.dataset.amount;
-    document.getElementById('es-due').value = btn.dataset.due;
     document.getElementById('edit-stall-dialog').showModal();
 });
 

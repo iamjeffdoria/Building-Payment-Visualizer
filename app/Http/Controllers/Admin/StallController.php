@@ -10,11 +10,14 @@ use Illuminate\Validation\Rule;
 
 class StallController extends Controller
 {
-    public function show(Stall $stall)
+    public function show(Request $request, Stall $stall)
     {
         $stall->load(['building', 'payments']);
 
-        return view('admin.stalls.show', compact('stall'));
+        $year = max(2000, min(2100, (int) $request->input('year', today()->year)));
+        $paid = $stall->payments->where('year', $year)->keyBy('month');
+
+        return view('admin.stalls.show', compact('stall', 'year', 'paid'));
     }
 
     public function store(Request $request, Building $building)
@@ -26,7 +29,6 @@ class StallController extends Controller
             ],
             'tenant_name' => ['required', 'string', 'max:255'],
             'amount' => ['nullable', 'numeric', 'min:0'],
-            'due_date' => ['nullable', 'date'],
         ]);
 
         $stallNo = $validated['stall_no'] ?? null;
@@ -42,7 +44,6 @@ class StallController extends Controller
             'stall_no' => $stallNo,
             'tenant_name' => $validated['tenant_name'],
             'amount' => $validated['amount'] ?? $building->rent,
-            'due_date' => $validated['due_date'] ?? null,
         ]);
 
         return back()->with('success', 'Stall ' . $stallNo . ' added.');
@@ -58,9 +59,8 @@ class StallController extends Controller
                     ->ignore($stall->id),
             ],
             'tenant_name' => ['required', 'string', 'max:255'],
-            // Can't be lowered below what was already paid.
-            'amount' => ['required', 'numeric', 'min:' . $stall->amount_paid],
-            'due_date' => ['nullable', 'date'],
+            // Monthly amount. Months already paid keep the amount they were paid at.
+            'amount' => ['required', 'numeric', 'min:0'],
         ]);
 
         $stall->update($validated);

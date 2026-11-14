@@ -7,11 +7,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Payment extends Model
 {
-    protected $fillable = ['stall_id', 'amount', 'paid_on', 'note'];
+    protected $fillable = ['stall_id', 'year', 'month', 'amount', 'paid_on', 'note'];
 
     protected function casts(): array
     {
         return [
+            'year' => 'integer',
+            'month' => 'integer',
             'amount' => 'float',
             'paid_on' => 'date:Y-m-d',
         ];

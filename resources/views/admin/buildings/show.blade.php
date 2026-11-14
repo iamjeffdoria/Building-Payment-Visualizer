@@ -16,8 +16,8 @@
         <span style="width: 1px; height: 1.25rem; background: #d1d5db;"></span>
         <p class="text-sm text-gray-500">
             {{ $building->stalls_count }} stalls
-            &middot; Collected ₱{{ number_format($building->collected ?? 0, 2) }} of ₱{{ number_format($building->expected ?? 0, 2) }}
-            &middot; default rent ₱{{ number_format($building->rent, 2) }}
+            &middot; {{ today()->year }} collected ₱{{ number_format($building->collected ?? 0, 2) }} of ₱{{ number_format($building->expected ?? 0, 2) }} due so far
+            &middot; default monthly rent ₱{{ number_format($building->rent, 2) }}
         </p>
     </div>
 
@@ -49,13 +49,8 @@
                        class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
             </div>
             <div>
-                <label class="mb-1 block text-sm font-medium">Amount due</label>
+                <label class="mb-1 block text-sm font-medium">Monthly amount due</label>
                 <input type="number" step="0.01" min="0" name="amount" value="{{ old('amount') }}" placeholder="{{ $building->rent }}"
-                       class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
-            </div>
-            <div>
-                <label class="mb-1 block text-sm font-medium">Due date <span class="text-xs text-gray-500">(optional)</span></label>
-                <input type="date" name="due_date" value="{{ old('due_date') }}"
                        class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
             </div>
             <div class="flex justify-end gap-2 pt-3">
@@ -86,12 +81,8 @@
                 <input type="text" name="stall_no" id="es-no" required class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
             </div>
             <div>
-                <label class="mb-1 block text-sm font-medium">Amount due</label>
+                <label class="mb-1 block text-sm font-medium">Monthly amount due</label>
                 <input type="number" step="0.01" min="0" name="amount" id="es-amount" required class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
-            </div>
-            <div>
-                <label class="mb-1 block text-sm font-medium">Due date <span class="text-xs text-gray-500">(optional)</span></label>
-                <input type="date" name="due_date" id="es-due" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
             </div>
             <div class="flex justify-end gap-2 pt-3">
                 <button type="button" data-close class="rounded-md bg-gray-200 px-4 py-2 text-sm hover:bg-gray-300">Cancel</button>

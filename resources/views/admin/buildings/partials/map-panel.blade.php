@@ -15,16 +15,15 @@
     @endif
 </div>
 
-<div class="mt-3 grid grid-cols-4 gap-2 text-center text-xs">
+<div class="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
     <div class="rounded-lg bg-green-50 p-2"><div class="text-lg font-semibold text-green-800">{{ $s['paid'] }}</div>Paid</div>
-    <div class="rounded-lg bg-blue-50 p-2"><div class="text-lg font-semibold text-blue-800">{{ $s['partial'] }}</div>Partial</div>
     <div class="rounded-lg bg-gray-100 p-2"><div class="text-lg font-semibold text-gray-700">{{ $s['unpaid'] }}</div>Unpaid</div>
     <div class="rounded-lg bg-red-50 p-2"><div class="text-lg font-semibold text-red-800">{{ $s['overdue'] }}</div>Overdue</div>
 </div>
 
 <div class="mt-3">
     <div class="mb-1 flex justify-between text-xs text-gray-500">
-        <span>Collected ₱{{ number_format($s['collected']) }} of ₱{{ number_format($s['expected']) }}</span>
+        <span>{{ today()->year }} to date: ₱{{ number_format($s['collected']) }} of ₱{{ number_format($s['expected']) }}</span>
         <span>{{ $pct }}%</span>
     </div>
     <div class="h-2 overflow-hidden rounded-full bg-gray-200">
@@ -38,7 +37,7 @@
             <tr class="border-b border-gray-200 uppercase text-gray-500">
                 <th class="px-2 py-2">Stall</th>
                 <th class="px-2 py-2">Person</th>
-                <th class="px-2 py-2">Paid / Due</th>
+                <th class="px-2 py-2">Monthly</th>
                 <th class="px-2 py-2">Status</th>
             </tr>
         </thead>
@@ -48,7 +47,7 @@
                 <tr class="border-b border-gray-100">
                     <td class="px-2 py-1.5 font-medium">{{ $stall->stall_no }}</td>
                     <td class="px-2 py-1.5">{{ $stall->tenant_name }}</td>
-                    <td class="px-2 py-1.5">₱{{ number_format($stall->amount_paid) }} <span class="text-gray-400">/ ₱{{ number_format($stall->amount) }}</span></td>
+                    <td class="px-2 py-1.5">₱{{ number_format($stall->amount) }} <span class="text-gray-400">· {{ $stall->payments->where('year', today()->year)->count() }}/12 mo</span></td>
                     <td class="px-2 py-1.5">
                         <span class="rounded-full px-2 py-0.5 {{ \App\Models\Stall::STATUS_BADGES[$status] }}">{{ ucfirst($status) }}</span>
                     </td>

@@ -12,9 +12,9 @@
                 <th class="w-40 px-2 py-2.5">Actions</th>
                 <th class="px-2 py-2.5">Stall</th>
                 <th class="px-2 py-2.5">Person</th>
-                <th class="px-2 py-2.5">Paid / Due</th>
-                <th class="px-2 py-2.5">Due date</th>
-                <th class="px-2 py-2.5">Status</th>
+                <th class="px-2 pb-1 pt-2.5">Monthly due</th>
+                <th class="px-2 pb-1 pt-2.5">Months paid ({{ today()->year }})</th>
+                <th class="px-2 pb-1 pt-2.5">Status</th>
             </tr>
             <tr id="stall-filters" data-url="{{ route('admin.buildings.show', $building) }}" class="border-b border-gray-200">
                 <th class="px-2 py-2.5"></th>
@@ -33,17 +33,12 @@
                            aria-label="Search by amount" inputmode="decimal"
                            class="w-full rounded-md border border-gray-300 bg-white px-2.5 py-2 text-sm text-gray-800">
                 </th>
-                <th class="px-2 py-2.5 font-normal">
-                    <input type="date" name="due_date" value="{{ request('due_date') }}"
-                           aria-label="Filter by due date"
-                           class="w-full rounded-md border border-gray-300 bg-white px-2.5 py-2 text-sm text-gray-800">
-                </th>
+                <th class="px-2 pb-2.5"></th>
                 <th class="px-2 py-2.5 font-normal">
                     <select name="status" aria-label="Filter by status"
                             class="w-full rounded-md border border-gray-300 bg-white px-2.5 py-2 text-sm text-gray-800">
                         <option value="">All</option>
                         <option value="paid" @selected(request('status') === 'paid')>Paid</option>
-                        <option value="partial" @selected(request('status') === 'partial')>Partial</option>
                         <option value="unpaid" @selected(request('status') === 'unpaid')>Unpaid</option>
                         <option value="overdue" @selected(request('status') === 'overdue')>Overdue</option>
                     </select>
@@ -68,7 +63,6 @@
                                     data-stall-no="{{ $stall->stall_no }}"
                                     data-name="{{ $stall->tenant_name }}"
                                     data-amount="{{ $stall->amount }}"
-                                    data-due="{{ $stall->due_date?->format('Y-m-d') }}"
                                     class="inline-flex size-10 items-center justify-center bg-amber-500 text-white hover:bg-amber-600">
                                 <svg class="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -90,14 +84,13 @@
                     </td>
                     <td class="px-2 py-2.5 font-medium">{{ $stall->stall_no }}</td>
                     <td class="px-2 py-2.5">{{ $stall->tenant_name }}</td>
+                    <td class="whitespace-nowrap px-2 py-2.5">₱{{ number_format($stall->amount, 2) }}</td>
                     <td class="px-2 py-2.5">
-                        <div>₱{{ number_format($stall->amount_paid, 2) }} <span class="text-gray-400">/ ₱{{ number_format($stall->amount, 2) }}</span></div>
+                        @php($monthsPaid = $stall->payments->where('year', today()->year)->count())
+                        <div>{{ $monthsPaid }} <span class="text-gray-400">/ 12</span></div>
                         <div class="mt-1 h-1.5 w-32 overflow-hidden rounded-full bg-gray-200">
-                            <div class="h-full bg-green-500" style="width: {{ $stall->percent_paid }}%"></div>
+                            <div class="h-full bg-green-500" style="width: {{ round($monthsPaid / 12 * 100) }}%"></div>
                         </div>
-                    </td>
-                    <td class="px-2 py-2.5 {{ $status === 'overdue' ? 'font-medium text-red-600' : '' }}">
-                        {{ $stall->due_date?->format('M j, Y') ?? '—' }}
                     </td>
                     <td class="px-2 py-2.5">
                         <span class="rounded-full px-2 py-0.5 text-xs {{ \App\Models\Stall::STATUS_BADGES[$status] }}">{{ ucfirst($status) }}</span>

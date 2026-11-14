@@ -11,19 +11,23 @@ class Stall extends Model
 {
     public const STATUS_BADGES = [
         'paid' => 'bg-green-100 text-green-800',
-        'partial' => 'bg-blue-100 text-blue-800',
         'unpaid' => 'bg-gray-200 text-gray-700',
         'overdue' => 'bg-red-100 text-red-800',
     ];
 
-    protected $fillable = ['building_id', 'stall_no', 'tenant_name', 'amount', 'amount_paid', 'due_date'];
+    public const MONTHS = [
+        1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April',
+        5 => 'May', 6 => 'June', 7 => 'July', 8 => 'August',
+        9 => 'September', 10 => 'October', 11 => 'November', 12 => 'December',
+    ];
+
+    // "amount" is the MONTHLY amount due.
+    protected $fillable = ['building_id', 'stall_no', 'tenant_name', 'amount'];
 
     protected function casts(): array
     {
         return [
             'amount' => 'float',
-            'amount_paid' => 'float',
-            'due_date' => 'date:Y-m-d',
         ];
     }
 
@@ -32,60 +36,47 @@ class Stall extends Model
         return $this->belongsTo(Building::class);
     }
 
+    // The ledger: one row per paid month.
     public function payments(): HasMany
     {
-        return $this->hasMany(Payment::class)->orderByDesc('paid_on')->orderByDesc('id');
+        return $this->hasMany(Payment::class)->orderBy('year')->orderBy('month');
     }
 
-    public function getBalanceAttribute(): float
-    {
-        return max(0, round($this->amount - $this->amount_paid, 2));
-    }
-
-    public function getPercentPaidAttribute(): int
-    {
-        if ($this->amount <= 0) {
-            return 100;
-        }
-
-        return (int) min(100, round($this->amount_paid / $this->amount * 100));
-    }
-
-    // paid > overdue > partial > unpaid
+    // Status for the CURRENT year, up to the current month.
+    // overdue: a month before this one is unpaid
+    // unpaid:  only this month is unpaid
+    // paid:    everything up to and including this month is paid
     public function getStatusAttribute(): string
     {
-        if ($this->balance <= 0) {
-            return 'paid';
-        }
+        $year = today()->year;
+        $month = today()->month;
 
-        if ($this->due_date && $this->due_date->lt(today())) {
+        $paid = $this->payments->where('year', $year)->pluck('month');
+        $pastPaid = $paid->filter(fn ($m) => $m < $month)->count();
+
+        if ($pastPaid < $month - 1) {
             return 'overdue';
         }
 
-        return $this->amount_paid > 0 ? 'partial' : 'unpaid';
+        return $paid->contains($month) ? 'paid' : 'unpaid';
     }
 
     // Same rules as getStatusAttribute, but as a database filter.
     public function scopeOfStatus(Builder $query, ?string $status): Builder
     {
-        $today = today()->toDateString();
-        $notOverdue = fn ($w) => $w->whereNull('due_date')->orWhere('due_date', '>=', $today);
+        $year = today()->year;
+        $month = today()->month;
+
+        $past = '(select count(*) from payments where payments.stall_id = stalls.id and payments.year = ? and payments.month < ?)';
+        $current = '(select count(*) from payments where payments.stall_id = stalls.id and payments.year = ? and payments.month = ?)';
 
         return match ($status) {
-            'paid' => $query->whereColumn('amount_paid', '>=', 'amount'),
-            'overdue' => $query->whereColumn('amount_paid', '<', 'amount')
-                ->whereNotNull('due_date')->where('due_date', '<', $today),
-            'partial' => $query->whereColumn('amount_paid', '<', 'amount')
-                ->where('amount_paid', '>', 0)->where($notOverdue),
-            'unpaid' => $query->whereColumn('amount_paid', '<', 'amount')
-                ->where('amount_paid', '<=', 0)->where($notOverdue),
+            'overdue' => $query->whereRaw("$past < ?", [$year, $month, $month - 1]),
+            'paid' => $query->whereRaw("$past >= ?", [$year, $month, $month - 1])
+                ->whereRaw("$current > 0", [$year, $month]),
+            'unpaid' => $query->whereRaw("$past >= ?", [$year, $month, $month - 1])
+                ->whereRaw("$current = 0", [$year, $month]),
             default => $query,
         };
-    }
-
-    // Recalculate the cached total from the payment records.
-    public function refreshPaid(): void
-    {
-        $this->forceFill(['amount_paid' => $this->payments()->sum('amount')])->save();
     }
 }
