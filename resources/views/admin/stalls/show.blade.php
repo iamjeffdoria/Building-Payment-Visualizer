@@ -14,7 +14,10 @@
     $paidToDate = (float) $paid->where('month', '<=', $dueMonths)->sum('amount');
     $balance = max(0, $dueTotal - $paidToDate);
     $paidCount = $paid->count();
-    $pct = $dueTotal > 0 ? (int) min(100, round($paidToDate / $dueTotal * 100)) : 0;
+    // Progress is measured against the whole year: what was paid vs. what the 12 months add up to.
+    $paidTotal = (float) $paid->sum('amount');
+    $yearTotal = $paidTotal + (12 - $paidCount) * $stall->amount;
+    $pct = $yearTotal > 0 ? (int) floor($paidTotal / $yearTotal * 100) : 0;
 @endphp
 
 @section('content')
@@ -53,7 +56,7 @@
 
         <div class="mt-2">
             <div class="mb-1 flex justify-between text-xs text-gray-500">
-                <span>Paid vs. due so far in {{ $year }}</span><span>{{ $pct }}%</span>
+                <span>Paid vs. full year {{ $year }}</span><span>{{ $pct }}%</span>
             </div>
             <div class="h-1.5 overflow-hidden rounded-full bg-gray-200">
                 <div class="h-full bg-green-500" style="width: {{ $pct }}%"></div>
