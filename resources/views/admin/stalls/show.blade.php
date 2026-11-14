@@ -4,9 +4,17 @@
 @section('active', 'buildings')
 
 @php
-    $status = $stall->status;
-    $badge = \App\Models\Stall::STATUS_BADGES[$status];
     $today = today();
+
+    // Status of the viewed year (the model's status only covers the current year).
+    if ($year === $today->year) {
+        $status = $stall->status;
+    } elseif ($year < $today->year) {
+        $status = $paid->count() >= 12 ? 'paid' : 'overdue';
+    } else {
+        $status = 'upcoming';
+    }
+    $badge = \App\Models\Stall::STATUS_BADGES[$status] ?? 'bg-gray-100 text-gray-500';
 
     // How many months of the viewed year are already due.
     $dueMonths = $year < $today->year ? 12 : ($year === $today->year ? $today->month : 0);
@@ -14,6 +22,9 @@
     $paidToDate = (float) $paid->where('month', '<=', $dueMonths)->sum('amount');
     $balance = max(0, $dueTotal - $paidToDate);
     $paidCount = $paid->count();
+    // Months paid ahead of today (future months of this year, or any month of a future year).
+    $advanceCount = $paid->filter(fn ($p) => $year > $today->year || ($year === $today->year && $p->month > $today->month))->count();
+    $advanceThrough = $advanceCount ? \App\Models\Stall::MONTHS[$paid->keys()->max()] : null;
     // Progress is measured against the whole year: what was paid vs. what the 12 months add up to.
     $paidTotal = (float) $paid->sum('amount');
     $yearTotal = $paidTotal + (12 - $paidCount) * $stall->amount;
@@ -31,6 +42,9 @@
         </a>
         <h1 class="text-lg font-semibold leading-tight">{{ $stall->stall_no }} &middot; {{ $stall->tenant_name }}</h1>
         <span class="rounded-full px-2 py-0.5 text-xs {{ $badge }}">{{ ucfirst($status) }}</span>
+        @if ($advanceCount > 0)
+            <span class="rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-800">Paid ahead through {{ $advanceThrough }} {{ $year }}</span>
+        @endif
     </div>
 
     {{-- Summary --}}
@@ -96,16 +110,24 @@
                         <th class="px-2 py-2.5">Status</th>
                         <th class="px-2 py-2.5">Date paid</th>
                         <th class="px-2 py-2.5">Note</th>
-                        <th class="w-32 px-2 py-2.5">Action</th>
+                        <th class="w-64 px-2 py-2.5">Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (\App\Models\Stall::MONTHS as $m => $name)
                         @php
                             $p = $paid->get($m);
+                            // Unpaid months this row would settle, and the first of them (skips months already paid).
+                            $unpaidUpTo = $p ? 0 : $m - $paid->keys()->filter(fn ($k) => $k < $m)->count();
+                            $firstUnpaid = $p ? null : collect(range(1, $m))->first(fn ($k) => ! $paid->has($k));
+                            $fromName = $firstUnpaid ? \App\Models\Stall::MONTHS[$firstUnpaid] : $name;
+                            // Paid months this row's "Undo from here" would remove (this month and every later one).
+                            $paidFromHere = $p ? $paid->keys()->filter(fn ($k) => $k >= $m)->count() : 0;
+                            $lastPaidName = $p ? \App\Models\Stall::MONTHS[$paid->keys()->max()] : null;
                             if ($p) {
-                                $label = 'Paid';
-                                $cls = 'bg-green-100 text-green-800';
+                                $isAdvance = $year > $today->year || ($year === $today->year && $m > $today->month);
+                                $label = $isAdvance ? 'Advance' : 'Paid';
+                                $cls = $isAdvance ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800';
                             } elseif ($year < $today->year || ($year === $today->year && $m < $today->month)) {
                                 $label = 'Overdue';
                                 $cls = 'bg-red-100 text-red-800';
@@ -129,10 +151,18 @@
                                 <td class="px-2 py-2.5 text-gray-600">{{ $p->note ?: '—' }}</td>
                                 <td class="px-2 py-2.5">
                                     <form method="POST" action="{{ route('admin.payments.destroy', $p) }}"
-                                          data-confirm="Remove the {{ $name }} {{ $year }} payment?">
+                                          class="flex items-center gap-1.5">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="rounded-md bg-red-600 px-2.5 py-1 text-xs text-white hover:bg-red-700">Undo</button>
+                                        <button type="submit" name="mode" value="single"
+                                                onclick="return confirm('Remove the {{ $name }} {{ $year }} payment?')"
+                                                class="whitespace-nowrap rounded-md bg-red-600 px-2.5 py-1 text-xs text-white hover:bg-red-700">Undo</button>
+                                        @if ($paidFromHere > 1)
+                                            <button type="submit" name="mode" value="from"
+                                                    title="Removes {{ $paidFromHere }} payments ({{ $name }} to {{ $lastPaidName }})"
+                                                    onclick="return confirm('Remove {{ $paidFromHere }} payments, {{ $name }} to {{ $lastPaidName }} {{ $year }}?')"
+                                                    class="whitespace-nowrap rounded-md border border-red-600 px-2.5 py-1 text-xs text-red-700 hover:bg-red-50">Undo from here</button>
+                                        @endif
                                     </form>
                                 </td>
                             @else
@@ -148,11 +178,19 @@
                                            class="w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm">
                                 </td>
                                 <td class="px-2 py-2.5">
-                                    <form id="pay-{{ $m }}" method="POST" action="{{ route('admin.payments.store', $stall) }}">
+                                    <form id="pay-{{ $m }}" method="POST" action="{{ route('admin.payments.store', $stall) }}"
+                                          class="flex items-center gap-1.5">
                                         @csrf
                                         <input type="hidden" name="year" value="{{ $year }}">
                                         <input type="hidden" name="month" value="{{ $m }}">
-                                        <button type="submit" class="rounded-md bg-blue-600 px-2.5 py-1 text-xs text-white hover:bg-blue-700">Mark paid</button>
+                                        <button type="submit" name="mode" value="single"
+                                                class="whitespace-nowrap rounded-md bg-blue-600 px-2.5 py-1 text-xs text-white hover:bg-blue-700">Mark paid</button>
+                                        @if ($unpaidUpTo > 1)
+                                            <button type="submit" name="mode" value="through"
+                                                    title="Marks {{ $unpaidUpTo }} months as paid ({{ $fromName }} to {{ $name }})"
+                                                    onclick="return confirm('Mark {{ $unpaidUpTo }} months as paid, {{ $fromName }} to {{ $name }} {{ $year }}?') && payThrough(this.form)"
+                                                    class="whitespace-nowrap rounded-md border border-blue-600 px-2.5 py-1 text-xs text-blue-700 hover:bg-blue-50">Pay up to here</button>
+                                        @endif
                                     </form>
                                 </td>
                             @endif
@@ -163,3 +201,31 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+<script>
+    // "Pay up to here": send every unpaid row's own date and note along with the click.
+    function payThrough(form) {
+        form.querySelectorAll('input[data-row]').forEach(function (i) { i.remove(); });
+
+        var month = parseInt(form.querySelector('input[name="month"]').value, 10);
+
+        for (var k = 1; k <= month; k++) {
+            var date = document.querySelector('input[name="paid_on"][form="pay-' + k + '"]');
+            var note = document.querySelector('input[name="note"][form="pay-' + k + '"]');
+            if (!date) continue; // this month is already paid
+
+            [['dates[' + k + ']', date.value], ['notes[' + k + ']', note ? note.value : '']].forEach(function (pair) {
+                var hidden = document.createElement('input');
+                hidden.type = 'hidden';
+                hidden.name = pair[0];
+                hidden.value = pair[1];
+                hidden.setAttribute('data-row', '');
+                form.appendChild(hidden);
+            });
+        }
+
+        return true;
+    }
+</script>
+@endpush
