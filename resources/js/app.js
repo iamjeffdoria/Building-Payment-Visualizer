@@ -4,3 +4,4 @@ import './dialogs';
 import './confirm';
 import './sidebar';
 import './profile-crop';
+import './toast';

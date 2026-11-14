@@ -15,22 +15,6 @@
         <x-topbar :title="trim($__env->yieldContent('title', 'Dashboard'))" />
 
         <main class="px-4 pb-6 pt-6 sm:px-7 sm:pb-7">
-            @if (session('greeting'))
-                <div class="mb-4 rounded-md bg-green-100 px-4 py-3 text-sm text-green-800">{{ session('greeting') }}</div>
-            @endif
-            @if (session('success'))
-                <div class="mb-4 rounded-md bg-green-100 px-4 py-3 text-sm text-green-800">{{ session('success') }}</div>
-            @endif
-            @if ($errors->any())
-                <div class="mb-4 rounded-md bg-red-100 px-4 py-3 text-sm text-red-800">
-                    <ul class="list-disc pl-5">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
             @yield('content')
         </main>
     </div>
@@ -115,6 +99,22 @@
         </div>
     </form>
 </dialog>
+
+{{-- Toast notifications (flash messages and errors are shown here, then auto-dismiss) --}}
+@php
+    $toasts = [];
+    if (session('greeting')) {
+        $toasts[] = ['type' => 'success', 'message' => session('greeting')];
+    }
+    if (session('success')) {
+        $toasts[] = ['type' => 'success', 'message' => session('success')];
+    }
+    foreach ($errors->all() as $error) {
+        $toasts[] = ['type' => 'error', 'message' => $error];
+    }
+@endphp
+<div id="toast-root" data-toasts="{{ json_encode($toasts) }}"
+     class="pointer-events-none fixed right-4 top-20 z-[100] flex w-[calc(100%-2rem)] max-w-sm flex-col gap-2"></div>
 
 @stack('scripts')
 </body>
