@@ -41,8 +41,11 @@
             <label class="mb-2 block text-sm font-medium">Profile picture</label>
             <div class="flex items-center gap-4">
                 @if (auth()->user()->photo_url)
-                    <img src="{{ auth()->user()->photo_url }}" alt="Current profile picture"
-                         class="size-24 shrink-0 rounded-full border border-gray-200 object-cover">
+                    <button type="button" data-preview="{{ auth()->user()->photo_url }}" title="Click to view full photo"
+                            class="shrink-0 cursor-zoom-in rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
+                        <img src="{{ auth()->user()->photo_url }}" alt="Current profile picture"
+                             class="size-24 rounded-full border border-gray-200 object-cover">
+                    </button>
                 @else
                     <span class="inline-flex size-24 shrink-0 items-center justify-center rounded-full bg-blue-600 text-3xl font-semibold text-white">
                         {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
@@ -98,6 +101,20 @@
             <button type="submit" class="rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700">Save</button>
         </div>
     </form>
+</dialog>
+
+{{-- Full photo preview (opened by clicking the profile picture) --}}
+<dialog id="photo-preview-dialog" class="m-auto max-w-[90vw] overflow-visible bg-transparent p-0 backdrop:bg-black/70">
+    <div class="relative">
+        <img id="photo-preview-img" src="" alt="Profile picture"
+             class="max-h-[85vh] max-w-[90vw] rounded-lg bg-white object-contain shadow-2xl">
+        <button type="button" data-close aria-label="Close preview"
+                class="absolute right-2 top-2 inline-flex size-9 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80">
+            <svg class="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+    </div>
 </dialog>
 
 {{-- Toast notifications (flash messages and errors are shown here, then auto-dismiss) --}}

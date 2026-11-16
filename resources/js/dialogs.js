@@ -8,4 +8,16 @@ document.addEventListener('click', function (e) {
     if (closer) {
         closer.closest('dialog').close();
     }
+
+    // Click a profile picture to see the full, unframed image.
+    var preview = e.target.closest('[data-preview]');
+    if (preview) {
+        document.getElementById('photo-preview-img').src = preview.dataset.preview;
+        document.getElementById('photo-preview-dialog').showModal();
+    }
+
+    // Clicking the dark backdrop closes the preview.
+    if (e.target.id === 'photo-preview-dialog') {
+        e.target.close();
+    }
 });
