@@ -29,7 +29,7 @@ class BuildingController extends Controller
                 str_contains((string) (float) $b->collected, $num('collected'))
                 || str_contains((string) (float) $b->expected, $num('collected'))))
             ->when($request->filled('collectible'), fn ($c) => $c->filter(fn ($b) =>
-                str_contains((string) max(0, (float) $b->expected - (float) $b->collected), $num('collectible'))))
+                str_contains((string) (float) $b->collectible, $num('collectible'))))
             ->when($request->filled('rent'), fn ($c) => $c->filter(fn ($b) =>
                 str_contains((string) (float) $b->rent, $num('rent'))))
             ->values();

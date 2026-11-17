@@ -18,9 +18,9 @@
 
     // How many months of the viewed year are already due.
     $dueMonths = $year < $today->year ? 12 : ($year === $today->year ? $today->month : 0);
-    $dueTotal = $dueMonths * $stall->amount;
-    $paidToDate = (float) $paid->where('month', '<=', $dueMonths)->sum('amount');
-    $balance = max(0, $dueTotal - $paidToDate);
+    // Balance counts unpaid due months only, so discounted payments don't leave a leftover amount.
+    $unpaidDue = $dueMonths - $paid->where('month', '<=', $dueMonths)->count();
+    $balance = max(0, $unpaidDue) * $stall->amount;
     $paidCount = $paid->count();
     // Months paid ahead of today (future months of this year, or any month of a future year).
     $advanceCount = $paid->filter(fn ($p) => $year > $today->year || ($year === $today->year && $p->month > $today->month))->count();
@@ -121,6 +121,10 @@
                             $unpaidUpTo = $p ? 0 : $m - $paid->keys()->filter(fn ($k) => $k < $m)->count();
                             $firstUnpaid = $p ? null : collect(range(1, $m))->first(fn ($k) => ! $paid->has($k));
                             $fromName = $firstUnpaid ? \App\Models\Stall::MONTHS[$firstUnpaid] : $name;
+                            // Total for "Pay up to here" if paid today (months not yet arrived are discounted).
+                            $batchTotal = collect(range($firstUnpaid ?? $m, $m))
+                                ->reject(fn ($k) => $paid->has($k))
+                                ->sum(fn ($k) => \App\Models\Stall::amountFor($stall->amount, $year, $k, $today));
                             // Paid months this row's "Undo from here" would remove (this month and every later one).
                             $paidFromHere = $p ? $paid->keys()->filter(fn ($k) => $k >= $m)->count() : 0;
                             $lastPaidName = $p ? \App\Models\Stall::MONTHS[$paid->keys()->max()] : null;
@@ -187,8 +191,8 @@
                                                 class="whitespace-nowrap rounded-md bg-blue-600 px-2.5 py-1 text-xs text-white hover:bg-blue-700">Mark paid</button>
                                         @if ($unpaidUpTo > 1)
                                             <button type="submit" name="mode" value="through"
-                                                    title="Marks {{ $unpaidUpTo }} months as paid ({{ $fromName }} to {{ $name }})"
-                                                    onclick="return confirm('Mark {{ $unpaidUpTo }} months as paid, {{ $fromName }} to {{ $name }} {{ $year }}?') && payThrough(this.form)"
+                                                    title="Marks {{ $unpaidUpTo }} months as paid ({{ $fromName }} to {{ $name }}), total ₱{{ number_format($batchTotal, 2) }} if paid today"
+                                                    onclick="return confirm('Mark {{ $unpaidUpTo }} months as paid, {{ $fromName }} to {{ $name }} {{ $year }}? Total: ₱{{ number_format($batchTotal, 2) }} (months paid in advance get 10% off)') && payThrough(this.form)"
                                                     class="whitespace-nowrap rounded-md border border-blue-600 px-2.5 py-1 text-xs text-blue-700 hover:bg-blue-50">Pay up to here</button>
                                         @endif
                                     </form>

@@ -21,6 +21,21 @@ class Stall extends Model
         9 => 'September', 10 => 'October', 11 => 'November', 12 => 'December',
     ];
 
+    // Discount for paying a month in advance (before that month arrives).
+    public const BATCH_DISCOUNT = 0.10;
+
+    // Amount for one month, based on WHEN it is paid:
+    // paid before its own month = discounted, paid in or after its month = full price.
+    public static function amountFor(float|string $amount, int $year, int $month, $paidOn): float
+    {
+        $amount = (float) $amount;
+        $paid = \Illuminate\Support\Carbon::parse($paidOn);
+
+        $isAdvance = ($year * 12 + $month) > ($paid->year * 12 + $paid->month);
+
+        return $isAdvance ? round($amount * (1 - self::BATCH_DISCOUNT), 2) : $amount;
+    }
+
     // "amount" is the MONTHLY amount due.
     protected $fillable = ['building_id', 'stall_no', 'tenant_name', 'amount'];
 

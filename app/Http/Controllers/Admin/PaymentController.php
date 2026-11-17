@@ -41,14 +41,19 @@ class PaymentController extends Controller
         $dates = $validated['dates'] ?? [];
         $notes = $validated['notes'] ?? [];
 
-        DB::transaction(function () use ($stall, $toPay, $year, $month, $validated, $dates, $notes) {
+        // Discount depends on the payment date: only months paid BEFORE their own month get it.
+        $amounts = $toPay->mapWithKeys(fn ($m) => [
+            $m => Stall::amountFor($stall->amount, $year, $m, $dates[$m] ?? $validated['paid_on']),
+        ]);
+
+        DB::transaction(function () use ($stall, $toPay, $year, $month, $validated, $dates, $notes, $amounts) {
             foreach ($toPay as $m) {
                 $isClicked = $m === $month;
 
                 $stall->payments()->create([
                     'year' => $year,
                     'month' => $m,
-                    'amount' => $stall->amount,
+                    'amount' => $amounts[$m],
                     'paid_on' => $dates[$m] ?? $validated['paid_on'],
                     'note' => array_key_exists($m, $notes)
                         ? $notes[$m]
@@ -57,7 +62,7 @@ class PaymentController extends Controller
             }
         });
 
-        $total = '₱' . number_format($stall->amount * $toPay->count(), 2);
+        $total = '₱' . number_format($amounts->sum(), 2);
 
         if ($toPay->count() === 1) {
             return back()->with('success', Stall::MONTHS[$toPay->first()] . ' ' . $year . ' marked as paid (' . $total . ').');

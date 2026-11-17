@@ -58,7 +58,7 @@
                     $collected = (float) ($building->collected ?? 0);
                     $expected = (float) ($building->expected ?? 0);
                     $pct = $expected > 0 ? (int) round($collected / $expected * 100) : 0;
-                    $collectible = max(0, $expected - $collected);
+                    $collectible = (float) ($building->collectible ?? 0);
                 @endphp
                 <tr class="border-b border-gray-100">
                     <td class="px-2 py-2.5">
