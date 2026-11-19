@@ -15,7 +15,7 @@
         </p>
     </div>
 
-    <div class="grid grid-cols-1 gap-4 2xl:grid-cols-[minmax(0,1fr)_22rem]">
+    <div class="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_22rem] xl:items-start">
         {{-- Map --}}
         <div class="rounded-xl bg-white p-5 shadow-sm">
             <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
@@ -30,14 +30,14 @@
                 </div>
             </div>
 
-            <div class="overflow-x-auto rounded-lg border border-gray-200 bg-gray-50">
-            <svg id="market-map" viewBox="10 0 960 415" class="min-w-[760px] w-full select-none" data-buildings="{{ $buildingData->toJson() }}"></svg>
+            <div class="rounded-lg border border-gray-200 bg-gray-50">
+                <svg id="market-map" viewBox="10 0 960 415" class="block w-full select-none" data-buildings="{{ $buildingData->toJson() }}"></svg>
             </div>
         </div>
 
         {{-- Details panel (HTML is rendered by the server) --}}
-        <div class="rounded-xl bg-white p-5 shadow-sm">
-            <div id="map-panel"></div>
+        <div class="rounded-xl bg-white p-5 shadow-sm xl:sticky xl:top-20 xl:min-h-[34rem]">
+            <div id="map-panel" class="transition-opacity duration-150"></div>
         </div>
     </div>
 @endsection

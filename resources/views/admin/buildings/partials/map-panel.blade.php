@@ -47,7 +47,7 @@
                 <tr class="border-b border-gray-100">
                     <td class="px-2 py-1.5 font-medium">{{ $stall->stall_no }}</td>
                     <td class="px-2 py-1.5">{{ $stall->tenant_name }}</td>
-                    <td class="px-2 py-1.5">₱{{ number_format($stall->amount) }} <span class="text-gray-400">· {{ $stall->payments->where('year', today()->year)->count() }}/12 mo</span></td>
+                    <td class="whitespace-nowrap px-2 py-1.5">₱{{ number_format($stall->amount) }}<div class="text-gray-400">{{ $stall->payments->where('year', today()->year)->count() }}/12 mo</div></td>
                     <td class="px-2 py-1.5">
                         <span class="rounded-full px-2 py-0.5 {{ \App\Models\Stall::STATUS_BADGES[$status] }}">{{ ucfirst($status) }}</span>
                     </td>
