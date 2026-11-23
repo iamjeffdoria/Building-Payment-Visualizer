@@ -8,25 +8,29 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
-        @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-        .animate-fade-in { animation: fade-in .25s ease-out both; }
+        @keyframes fade-in-up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fade-in-up .45s ease-out both; }
         @media (prefers-reduced-motion: reduce) { .animate-fade-in { animation: none; } }
     </style>
 </head>
 <body class="bg-gray-50 font-sans text-gray-800 antialiased">
-<main class="flex min-h-screen items-center justify-center px-4 py-10">
+<div aria-hidden="true" class="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-linear-to-br from-blue-50 via-gray-50 to-indigo-50">
+    <div class="absolute -left-24 -top-24 size-72 rounded-full bg-blue-200/40 blur-3xl"></div>
+    <div class="absolute -bottom-24 -right-24 size-80 rounded-full bg-indigo-200/40 blur-3xl"></div>
+</div>
+<main class="relative flex min-h-screen items-center justify-center px-4 py-10">
     <div class="animate-fade-in w-full max-w-sm">
 
         {{-- Brand --}}
         <div class="mb-6 flex flex-col items-center text-center">
-            <span class="inline-flex size-10 items-center justify-center rounded-md bg-gray-900 text-base font-semibold text-white">
+            <span class="inline-flex size-12 items-center justify-center rounded-xl bg-blue-600 text-lg font-bold text-white shadow-lg shadow-blue-600/30">
                 {{ strtoupper(substr(config('app.name'), 0, 1)) }}
             </span>
-            <h1 class="mt-4 text-xl font-semibold text-gray-900">Sign in</h1>
-            <p class="mt-1 text-sm text-gray-500">{{ config('app.name') }}</p>
+            <h1 class="mt-4 text-2xl font-semibold text-gray-900">Welcome back</h1>
+            <p class="mt-1 text-sm text-gray-500">Sign in to {{ config('app.name') }}</p>
         </div>
 
-        <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+        <div class="rounded-2xl border border-gray-200/80 bg-white/90 p-7 shadow-xl shadow-gray-900/5 backdrop-blur">
 
             @if ($errors->any())
                 <div role="alert" class="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
@@ -43,7 +47,7 @@
                     <input type="email" id="email" name="email"
                            value="{{ old('email', request()->cookie('remembered_email')) }}" required autofocus
                            autocomplete="email"
-                           class="w-full rounded-md border bg-white px-3 py-2 text-sm outline-none transition focus:ring-2 {{ $errors->has('email') ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20' : 'border-gray-300 focus:border-gray-900 focus:ring-gray-900/10' }}">
+                           class="w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm outline-none transition focus:ring-4 {{ $errors->has('email') ? 'border-red-300 focus:border-red-500 focus:ring-red-500/15' : 'border-gray-300 focus:border-blue-600 focus:ring-blue-600/15' }}">
                 </div>
 
                 {{-- Password --}}
@@ -52,9 +56,9 @@
                     <div class="relative">
                         <input type="password" id="password" name="password" required
                                autocomplete="current-password"
-                               class="w-full rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-sm outline-none transition focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10">
+                               class="w-full rounded-lg border border-gray-300 bg-white py-2.5 pl-3.5 pr-10 text-sm outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-600/15">
                         <button type="button" id="toggle-password" aria-label="Show password"
-                                class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 transition hover:text-gray-600 focus:outline-none focus-visible:text-gray-900">
+                                class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 transition hover:text-gray-600 focus:outline-none focus-visible:text-blue-600">
                             <svg id="eye-open" class="size-5" viewBox="0 0 20 20" fill="currentColor">
                                 <path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/>
                                 <path fill-rule="evenodd" d="M.66 10.37a1 1 0 0 1 0-.74C1.9 6.4 5.6 3.5 10 3.5s8.1 2.9 9.34 6.13a1 1 0 0 1 0 .74C18.1 13.6 14.4 16.5 10 16.5S1.9 13.6.66 10.37ZM14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" clip-rule="evenodd"/>
@@ -70,19 +74,21 @@
                 {{-- Remember --}}
                 <label for="remember" class="flex cursor-pointer select-none items-center gap-2 text-sm text-gray-600">
                     <input type="checkbox" id="remember" name="remember" value="1"
-                           class="size-4 cursor-pointer rounded border-gray-300 accent-gray-900">
+                           class="size-4 cursor-pointer rounded border-gray-300 accent-blue-600">
                     Keep me signed in
                 </label>
 
                 {{-- Submit --}}
                 <button type="submit" id="submit-btn"
-                        class="flex w-full items-center justify-center gap-2 rounded-md bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-900/40 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70">
+                        class="group flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white shadow-md shadow-blue-600/25 transition hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-600/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600/40 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70">
                     <svg id="spinner" class="hidden size-4 animate-spin" viewBox="0 0 24 24" fill="none">
                         <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"/>
                         <path d="M4 12a8 8 0 0 1 8-8" stroke="currentColor" stroke-width="4" stroke-linecap="round" class="opacity-90"/>
                     </svg>
                     <span id="submit-label">Sign in</span>
-                    <svg id="submit-arrow" class="hidden size-4" viewBox="0 0 20 20" fill="currentColor"></svg>
+                    <svg id="submit-arrow" class="size-4 transition-transform group-hover:translate-x-0.5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z" clip-rule="evenodd"/>
+                    </svg>
                 </button>
             </form>
         </div>
