@@ -1,5 +1,5 @@
 <div class="rounded-lg border border-gray-200"
-     style="max-height: calc(100dvh - 10rem); min-height: 15rem; overflow-x: hidden; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent;">
+     style="max-height: calc(100dvh - 10rem); min-height: 15rem; overflow: auto; scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent;">
     <style>
         .tbl-sticky { border-collapse: separate; border-spacing: 0; }
         .tbl-sticky thead { position: sticky; top: 0; z-index: 10; }
@@ -7,7 +7,7 @@
         .tbl-sticky thead tr:last-child th { background: #ffffff; border-bottom: 1px solid #e5e7eb; }
         .tbl-sticky tbody td { border-bottom: 1px solid #f3f4f6; }
     </style>
-    <table class="tbl-sticky w-full text-left text-sm">
+    <table class="tbl-sticky w-full min-w-[860px] text-left text-sm">
         <thead>
             <tr class="border-b border-gray-200 bg-gray-50 text-xs uppercase text-gray-500">
                 <th class="w-32 px-2 py-2.5">Actions</th>
@@ -63,11 +63,11 @@
                 <tr class="border-b border-gray-100">
                     <td class="px-2 py-2.5">
                         <a href="{{ route('admin.buildings.show', $building) }}"
-                           class="rounded-md bg-blue-600 px-2.5 py-1 text-xs text-white hover:bg-blue-700">Manage stalls</a>
+                           class="whitespace-nowrap rounded-md bg-blue-600 px-2.5 py-1 text-xs text-white hover:bg-blue-700">Manage stalls</a>
                     </td>
                     <td class="px-2 py-2.5 font-medium">{{ $building->name }}</td>
                     <td class="px-2 py-2.5">{{ $building->stalls_count }}</td>
-                    <td class="px-2 py-2.5">{{ $building->paid_count }} / {{ $building->stalls_count }}</td>
+                    <td class="whitespace-nowrap px-2 py-2.5">{{ $building->paid_count }} / {{ $building->stalls_count }}</td>
                     <td class="px-2 py-2.5">
                         <div>₱{{ number_format($collected, 2) }} <span class="text-gray-400">/ ₱{{ number_format($expected, 2) }}</span></div>
                         <div class="mt-1 h-1.5 w-32 overflow-hidden rounded-full bg-gray-200">

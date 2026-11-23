@@ -1,5 +1,5 @@
 <div class="overflow-x-auto">
-    <table class="w-full text-left text-sm">
+    <table class="w-full min-w-[640px] text-left text-sm">
         <thead>
             <tr class="border-b border-gray-200 text-xs uppercase text-gray-500">
                 <th class="px-2 py-2.5">Name</th>
@@ -35,7 +35,7 @@
                                 data-name="{{ $admin->name }}"
                                 data-email="{{ $admin->email }}"
                                 data-role="{{ $admin->role }}"
-                                class="rounded-md bg-blue-600 px-2.5 py-1 text-xs text-white hover:bg-blue-700">Edit</button>
+                                class="whitespace-nowrap rounded-md bg-blue-600 px-2.5 py-1 text-xs text-white hover:bg-blue-700">Edit</button>
 
                         @if ($admin->id !== auth()->id())
                             <form method="POST" action="{{ route('admin.users.destroy', $admin) }}"
@@ -43,7 +43,7 @@
                                   data-confirm="Remove this admin account?">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="rounded-md bg-red-600 px-2.5 py-1 text-xs text-white hover:bg-red-700">Delete</button>
+                                <button type="submit" class="whitespace-nowrap rounded-md bg-red-600 px-2.5 py-1 text-xs text-white hover:bg-red-700">Delete</button>
                             </form>
                         @endif
                     </td>
